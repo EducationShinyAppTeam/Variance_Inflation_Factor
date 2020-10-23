@@ -1,15 +1,22 @@
 # Load Packages
 library(shiny)
+library(car)
 library(shinydashboard)
 library(shinyBS)
 library(boastUtils)
-library(ggplot2)
+library(DT)
+library(shinyalert)
+library(shinyWidgets)
+library(devtools)
+#TicTacToe
+GRID_SIZE <- 3
+TILE_COUNT <- GRID_SIZE ^ 2
 
 # App Meta Data----------------------------------------------------------------
-APP_TITLE  <<- "[Sample App]"
+APP_TITLE  <<- "VIF"
 APP_DESCP  <<- paste(
-  "Description of the app",
-  "use multiple lines to keep the description legible."
+  "This app this for letting students know VIF scores",
+  "using in Regression and also collinearity problem."
 )
 # End App Meta Data------------------------------------------------------------
 
@@ -20,19 +27,16 @@ APP_DESCP  <<- paste(
 ui <- list(
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css",
-    href = "https://educationshinyappteam.github.io/Style_Guide/theme/boast.css")
+              href = "https://educationshinyappteam.github.io/Style_Guide/theme/boast.css")
     #href = "boast.css") ## This is for Neil's testing purposes
   ),
   ## Create the app page
   dashboardPage(
-    skin = "blue",
+    skin = "black",
     ### Create the app header
     dashboardHeader(
-      title = "Sample App", # You may use a shortened form of the title here
+      title = "VIF", # You may use a shortened form of the title here
       tags$li(class = "dropdown", actionLink("info", icon("info"))),
-      tags$li(class = "dropdown",
-              tags$a(href='https://github.com/EducationShinyAppTeam/BOAST',
-                     icon("github"))),
       tags$li(class = "dropdown",
               tags$a(href='https://shinyapps.science.psu.edu/',
                      icon("home")))
@@ -44,8 +48,7 @@ ui <- list(
         menuItem("Overview", tabName = "Overview", icon = icon("dashboard")),
         menuItem("Prerequisites", tabName = "Prerequisites", icon = icon("book")),
         menuItem("Explore", tabName = "Explore", icon = icon("wpexplorer")),
-        menuItem("Challenge", tabName = "Challenge", icon = icon("gears")),
-        menuItem("Game", tabName = "Game", icon = icon("gamepad")),
+        menuItem("game", tabName = "game", icon = icon("gamepad")),
         menuItem("References", tabName = "References", icon = icon("leanpub"))
       ),
       tags$div(
@@ -60,14 +63,13 @@ ui <- list(
         tabItem(
           tabName = "Overview",
           withMathJax(),
-          h1("Sample Application for BOAST Apps"), # This should be the full name.
-          p("This is a sample Shiny application for BOAST."),
+          h1("VIF & Collinearity Problem for BOAST Apps"), # This should be the full name.
+          p("This is a Shiny application for BOAST for VIF & Collineraity Problem."),
           h2("Instructions"),
-          p("This information will change depending on what you want to do."),
+          p("In this Chapter, you will directly learn what's VIF and what's causing Collinearity Problem."),
           tags$ol(
             tags$li("Review any prerequiste ideas using the Prerequistes tab."),
             tags$li("Explore the Exploration Tab."),
-            tags$li("Challenge yourself."),
             tags$li("Play the game to test how far you've come.")
           ),
           ##### Go Button--location will depend on your goals
@@ -86,15 +88,14 @@ ui <- list(
           br(),
           h2("Acknowledgements"),
           p(
-            "This version of the app was developed and coded by Neil J.
-            Hatfield  and Robert P. Carey, III.",
+            "This version of the app was developed and coded by Xigang Zhang",
             br(),
-            "We would like to extend a special thanks to the Shiny Program
-            Students.",
-            br(),
+            "We would like to extend a special thanks to the Neil J. Hatfield,
+             Robert P. Carey, III.",
             br(),
             br(),
-            div(class = "updated", "Last Update: 5/13/2020 by NJH.")
+            br(),
+            div(class = "updated", "Last Update: 10/01/2020 by XGZ.")
           )
         ),
         #### Set up the Prerequisites Page
@@ -105,45 +106,41 @@ ui <- list(
           p("In order to get the most out of this app, please review the
             following:"),
           tags$ul(
-            tags$li("Pre-req 1"),
-            tags$li("Pre-req 2"),
-            tags$li("Pre-req 3"),
-            tags$li("Pre-req 4")
+            tags$li("VIF is the quotient of the variance in a model with multiple terms by 
+                    the variance of a model with one term alone. It quantifies the severity 
+                    of multicollinearity in an ordinary least squares regression analysis. "),
+            tags$li("It provides an index that measures how much the variance 
+                    (the square of the estimate's standard deviation) of an estimated regression coefficient 
+                    is increased because of collinearity."),
+            tags$li("For example, the variance inflation factor for the estimated regression coefficient 
+                    bj —denoted VIFj —is just the factor by which the variance of bj is inflated by the 
+                    existence of correlation among the predictor variables in the model."),
+            tags$li("How do we interpret the variance inflation factors for a regression model?")
           ),
-          p("Notice the use of an unordered list; users can move through the
-            list any way they wish."),
+          p("A VIF of 1 means that there is no correlation among the jth predictor and the remaining predictor variables, 
+            and hence the variance of bj is not inflated at all."),
           box(
-            title = strong("Null Hypothesis Significance Tests (NHSTs)"),
+            title = strong("How to determine the Collenarity Problem?"),
             status = "primary",
             collapsible = TRUE,
             collapsed = TRUE,
             width = '100%',
-            "In the Confirmatory Data Analysis tradition, null hypothesis
-            significance tests serve as a critical tool to confirm that a
-            particular theoretical model describes our data and to make a
-            generalization from our sample to the broader population
-            (i.e., make an inference). The null hypothesis often reflects the
-            simpler of two models (e.g., 'no statistical difference',
-            'there is an additive difference of 1', etc.) that we will use to
-            build a sampling distribution for our chosen estimator. These
-            methods let us test whether our sample data are consistent with this
-            simple model (null hypothesis)."
+            "The general rule of thumb is that VIFs exceeding 4 warrant further investigation, 
+            while VIFs exceeding 10 are signs of serious multicollinearity requiring correction."
           ),
           box(
-            title = strong(tags$em("p"), "-values"),
+            title = strong("What's Collenarity Problem?"),
             status = "primary",
             collapsible = TRUE,
-            collapsed = FALSE,
+            collapsed = TRUE,
             width = '100%',
-            "The probability that our selected estimator takes on a value at
-            least as extreme as what we observed given our null hypothesis. If
-            we were to carry out our study infinitely many times and the null
-            hypothesis accurately modeled what we're studying, then we would
-            expect for our estimator to produce a value at least as extreme as
-            what we have seen 100*(p-value)% of the time. The larger the
-            p-value, the more often we would expect our estimator to take on a
-            value at least as extreme as what we've seen; the smaller, the less
-            often."
+            "Collenarity also named Multicollinearity exists 
+            when two or more of the predictors in a regression model are moderately or highly correlated with one another.Unfortunately 
+            when it exists, it can wreak havoc on our analysis and thereby limit the research conclusions we can draw. As following
+            The precision of the estimated regression coefficients decreases as more predictors are added to the model
+            The marginal contribution of any one predictor variable in reducing the error sum of squares depends on which other predictors are already in the model.
+            Hypothesis tests for βk = 0 may yield different conclusions depending on which predictors are in the model."
+            
           )
         ),
         #### Note: you must have at least one of the following pages. You might
@@ -153,245 +150,661 @@ ui <- list(
         tabItem(
           tabName = "Explore",
           withMathJax(),
-          h2("Explore the Concept"),
-          p("This page should include something for the user to do, the more
-            active and engaging, the better. The purpose of this page is to help
-            the user build a productive understanding of the concept your app
-            is dedicated to."),
-          p("Common elements include graphs, sliders, buttons, etc."),
-          p("The following comes from the NHST Caveats App:"),
-          ##### Example Exploration
-          #---------------------------------------------------------------------
-          #    Title: Caveats of NHST
-          #    Author: Neil J. Hatfield
-          #    Date: 10/15/19
-          #    Code version: unknown
-          #    Availability: https://github.com/EducationShinyAppTeam/
-          #                 Significance_Testing_Caveats/tree/PedagogicalUpdate1
-          #---------------------------------------------------------------------
-          h2("The Multiple Testing Caveat"),
-          p(
-            "In this portion, you'll explore the relationship between the number
-            of hypothesis tests you conduct and the number of results that would
-            be declared as 'statistically significant'. You are able to control
-            two aspects: 1) the number of hypothesis tests you want to simulate
-            doing, and 2) the threshold for determining whether or not you would
-            declare a test as 'statistically significant' (i.e., setting the
-            value of \\(\\alpha_{UT}\\))."
-          ),
-          p(
-            "Underlying this simulation is the notion that the null hypotheis is
-            true. Thus, any p-value that is less than or equal to
-            \\(\\alpha_{UT}\\) would lead a researcher to claim statistical
-            significance and make a Type I error."
-          ),
-          p(
-            "Use the controls to explore the relationship that exists between
-            the number of hypothesis tests you conduct and the number of tests
-            that would be declared 'statistically significant'."
-          ),
-          fluidRow(
-            column(
-              4,
-              h3("Controls"),
-              sliderInput(
-                inputId = "mtcAlpha",
-                label = "Set your threshold level, \\(\\alpha_{UT}\\):",
-                min = 0.01,
-                max = 0.25,
-                value = 0.1,
-                step = 0.01
+          h2("Explore the Concept of VIF & Collinearity Problem"),
+          tabsetPanel(
+            type = "tabs",
+            ### VIF Examples tab----
+            tabPanel(
+              title = "DC bike Sharing Data",
+              br(),
+              p(
+                "In this portion, you'll explore whether or not two continuous variables
+            would have Collinearity problem by selecting different variables.
+            You are able to control only one aspects: 1) the type of variables." 
+              ),
+              fluidRow(
+                column(
+                  4,
+                  h3("Controls"),
+                  selectInput(
+                    inputId = "DCbike",
+                    label = "Select your interested variable",
+                    choices = c('Windspeed','Humidity','Tempeture')
+                  ),
+                  br(),
+                  selectInput(
+                    inputId = "DCbike",
+                    label = "Select your another interested variable",
+                    choices = c('Windspeed','Humidity','Tempeture')
+                  )
+                ),
+                column(
+                  8,
+                  h3("Result"),
+                  DT::dataTableOutput("Viftable"),
+                  bsPopover(
+                    id = "VIFtable",
+                    title = "VIF Result!",
+                    content = "What happens when VIF is larger than 10?",
+                    placement = "top"
+                  )
+                )
               ),
               br(),
-              sliderInput(
-                inputId = "mtcTests",
-                label = "Set the number of hypothesis tests conducted:",
-                min = 0,
-                max = 500,
-                value = 5,
-                step = 5
+              p(
+                tags$em("Note"),
+                ": As the name suggests, a variance inflation factor (VIF) quantifies 
+          how much the variance is inflated. But what variance? 
+          Recall that we learned previously that the standard errors — 
+          and hence the variances — of the estimated coefficients are inflated when multicollinearity exists. 
+          A variance inflation factor exists for each of the predictors in a multiple regression model. 
+          The variance inflation factor for the estimated regression coefficient bj —denoted 
+          VIFj —is just the factor by which the variance of bj is inflated by the existence of correlation 
+          among the predictor variables in the model."
+              )
+              # End of Xigang Zhang's code-----------------------------------------
+            ),
+            ## Sesame street tab ----
+            tabPanel(
+              title = "Sesame.Stdata",
+              br(),
+              p(
+                "In this portion, you'll explore whether or not two continuous variables
+            would have Collinearity problem by selecting different variables.
+            You are able to control only one aspects: 1) the type of variables." 
+              ),
+              fluidRow(
+                column(
+                  4,
+                  h3("Controls"),
+                  selectInput(
+                    inputId = "Sesame",
+                    label = "Select your interested variable",
+                    choices = c('age','viewcat','site')
+                  ),
+                  br(),
+                  selectInput(
+                    inputId = "Sesame",
+                    label = "Select your another interested variable",
+                    choices = c('prenumb','preform','peabody')
+                  )
+                ),
+                column(
+                  8,
+                  h3("Result"),
+                  DT::dataTableOutput("Viftable1"),
+                  bsPopover(
+                    id = "VIFtable",
+                    title = "VIF Result!",
+                    content = "What happens when VIF is larger than 10?",
+                    placement = "top"
+                  )
+                )
+              ),
+              br(),
+              p(
+                tags$em("Note"),
+                ": 
+          The variance inflation factor for the estimated regression coefficient bj —denoted 
+          VIFj —is just the factor by which the variance of bj is inflated by the existence of correlation 
+          among the predictor variables in the model."
+              )
+              # End of Xigang Zhang's code-----------------------------------------
+            ),
+            #game Page
+            tabItem(
+              tabName = "game",
+              withMathJax(),
+              useShinyalert(),
+              h2("Tic-Tac-Toe"),
+              p(
+                "To play, click on any one of the buttons that have a question mark. 
+            A question will appear to the right with possible answers. If you answer 
+            correctly, you will take the square; if not, the computer will take 
+            the square. Try your best to win the game!"
+              ),
+              h3(uiOutput("player")),
+              fluidRow(
+                div(
+                  class = "col-sm-12 col-md-4",
+                  h3("game Board"),
+                  br(),
+                  uiOutput("gameBoard", class = "game-board")
+                ),
+                div(
+                  class = "col-sm-12 col-md-8",
+                  h3("Question"),
+                  withMathJax(uiOutput("question")),
+                  uiOutput("extraOutput"),
+                  h3("Answer"),
+                  uiOutput("answer"),
+                  actionButton(
+                    inputId = "submit",
+                    label = "Submit",
+                    color = "primary",
+                    size = "large",
+                    style = "bordered",
+                    disabled = TRUE
+                  ),
+                  actionButton(
+                    inputId = "reset",
+                    label = "Reset game",
+                    color = "primary",
+                    size = "large",
+                    style = "bordered"
+                  ),
+                  br(),
+                  #These two triggers help with MathJax re-rendering
+                  uiOutput("trigger1"),
+                  uiOutput("trigger2")
+                )
               )
             ),
-            column(
-              8,
-              h3("Plot"),
-              plotOutput("pplotMTC"),
-              bsPopover(
-                id = "pplotMTC",
-                title = "Investigate!",
-                content = "What happens to the number of statistically
-                significant tests when you increase the number of tests?",
-                placement = "top"
+            #### Set up the References Page-REQUIRED
+            tabItem(
+              tabName = "References",
+              withMathJax(),
+              h2("References"),
+              p(
+                class = "hangingindent",
+                "Attali, D. and Edwards, T. (2018). shinyalert: Easily create pretty 
+            popup messages (modals) in 'Shiny'. (v1.0). [R package]. Available 
+            from https://CRAN.R-project.org/package=shinyalert"
+              ),
+              p(
+                class = "hangingindent",
+                "Bailey, E. (2015). shinyBS: Twitter bootstrap components for shiny. 
+            (v0.61). [R package]. Available from https://CRAN.R-project.org/package=shinyBS"
+              ),
+              p(
+                class = "hangingindent",
+                "Carey, R. (2019). boastUtils: BOAST Utilities. (v0.1.0). [R Package]. 
+            Available from https://github.com/EducationShinyAppTeam/boastUtils"
+              ),
+              p(
+                class = "hangingindent",
+                "Chang, W. and Borges Ribeio, B. (2018). shinydashboard: Create 
+            dashboards with 'Shiny'. (v0.7.1) [R Package]. Available from 
+            https://CRAN.R-project.org/package=shinydashboard"
+              ),
+              p(
+                class = "hangingindent",
+                "Chang, W., Cheng, J., Allaire, J., Xie, Y., and McPherson, J. (2019). 
+            shiny: Web application framework for R. (v1.4.0) [R Package]. Available 
+            from https://CRAN.R-project.org/package=shiny"
+              ),
+              p(
+                class = "hangingindent",
+                "Perrier, V., Meyer, F., Granjon, D. (2019). shinyWidgets: Custom 
+            inputs widgets for shiny. (v0.5.0) [R Package]. Available from 
+            https://CRAN.R-project.org/package=shinyWidgets"
               )
             )
-          ),
-          br(),
-          p(
-            tags$em("Note"),
-            ": The points above the horizontal line are all p-values that exceed
-            your selected threshold. In other words, the points above the line
-            represent the tests where you would decided that the null hypothesis
-            provides a reasonable explanation for the data (i.e., 'fail to
-            reject the null').  The points below or on the horizontal line are
-            all p-values that are at or below your selected threshold. These
-            points represent tests where you would decide that the null
-            hypothesis doesn't adequately explain the data (i.e., 'reject the
-            null')."
-          )
-          # End of Neil Hatfield's code-----------------------------------------
-        ),
-        #### Set up a Challenge Page
-        tabItem(
-          tabName = "Challenge",
-          withMathJax(),
-          h2("Challenge Yourself"),
-          p("The general intent of a Challenge page is to have the user take
-            what they learned in an Exploration and apply that knowledge in new
-            contexts/situations. In essence, to have them challenge their
-            understanding by testing themselves."),
-          p("What this page looks like will be up to you. Something you might
-            consider is to re-create the tools of the Exploration page and then
-            a list of questions for the user to then answer.")
-        ),
-        #### Set up a Game Page
-        tabItem(
-          tabName = "Game",
-          withMathJax(),
-          h2("Practice/Test Yourself with [Type of Game]"),
-          p("On this type of tab, you'll set up a game for the user to play.
-            Game types include Tic-Tac-Toe, Matching, and a version Hangman to
-            name a few. If you have ideas for new game type, please let us know.")
-        ),
-        #### Set up the References Page-REQUIRED
-        tabItem(
-          tabName = "References",
-          withMathJax(),
-          h2("References"),
-          p(
-            class = "hangingindent",
-            "Bailey, E. (2015). shinyBS: Twitter bootstrap components for shiny.
-            (v0.61). [R package]. Available from
-            https://CRAN.R-project.org/package=shinyBS"
-          ),
-          p(
-            class = "hangingindent",
-            "Carey, R. (2019). boastUtils: BOAST Utilities. (v0.1.0).
-            [R Package]. Available from
-            https://github.com/EducationShinyAppTeam/boastUtils"
-          ),
-          p(
-            class = "hangingindent",
-            "Chang, W. and Borges Ribeio, B. (2018). shinydashboard: Create
-            dashboards with 'Shiny'. (v0.7.1) [R Package]. Available from
-            https://CRAN.R-project.org/package=shinydashboard"
-          ),
-          p(
-            class = "hangingindent",
-            "Chang, W., Cheng, J., Allaire, J., Xie, Y., and McPherson, J.
-            (2019). shiny: Web application framework for R. (v1.4.0)
-            [R Package]. Available from https://CRAN.R-project.org/package=shiny"
-          ),
-          p(
-            class = "hangingindent",
-            "Hatfield, N. J. (2019). Caveats of NHST. [Web App]. Available from
-            https://github.com/EducationShinyAppTeam/Significance_Testing_Caveats
-            /tree/PedagogicalUpdate1"
-          ),
-          p(
-            class = "hangingindent",
-            "Wickham, W. (2016). ggplot2: Elegant graphics for data analysis.
-            [R Package]. Springer-Verlag New York. Available from
-            https://ggplot2.tidyverse.org"
           )
         )
       )
     )
   )
 )
-
 # Define server logic
 server <- function(input, output, session) {
   ## Define what each button does
   observeEvent(input$go1, {
     updateTabItems(session, "tabs", "Explore")
   })
-
-
-  #-----------------------------------------------------------------------------
-  #    Title: Caveats of NHST
-  #    Author: Neil J. Hatfield
-  #    Date: 10/15/19
-  #    Code version: unknown
-  #    Availability: https://github.com/EducationShinyAppTeam/
-  #                 Significance_Testing_Caveats/tree/PedagogicalUpdate1
-  #-----------------------------------------------------------------------------
-
-  ## Listen for any inputs
-  nMTC <- reactive({
-    return(input$mtcTests)
+  # Variables
+  activeBtn <- NA
+  activeQuestion <- NA
+  player <- NA
+  opponent <- NA
+  scoreMatrix <-
+    matrix(
+      data = rep.int(0, times = TILE_COUNT),
+      nrow = GRID_SIZE,
+      ncol = GRID_SIZE
+    )
+  gameProgress <- FALSE
+  
+  #VIF TABLE
+  BikeSharing <-
+    read.csv("BikeSharing.csv",
+             stringsAsFactors = FALSE,
+             as.is = TRUE)
+  dc <- lm(Rental ~ Tempeture + Humidity + Windspeed, data = BikeSharing)
+  output$Viftable <- DT::renderDataTable({
+    as.data.frame(vif(dc))
   })
-  aMTC <- reactive({
-    return(input$mtcAlpha)
+  sesame <-
+    read.csv("sesame.csv",
+             stringsAsFactors = FALSE,
+             as.is = TRUE)
+  ss <- lm(improvenumb ~ age + viewcat + site + prenumb + preform + peabody, data = sesame)
+  output$Viftable1 <- DT::renderDataTable({
+    as.data.frame(vif(ss))
   })
-
-  ## Code for any outputs
-  #Plot for the Multiple Testing Caveat
-  #General Logic: Create a user-specified number of hypothesis tests' p-values.
-  #Compare those p-values to a user-specified threshold for significance.
-  output$pplotMTC <- shiny::renderPlot({
-    validate(need(input$mtcTests > 0,
-                  message = "Please input a valid number of tests"))
-    validate(need(input$mtcAlpha > 0,
-                  message = "Please input a valid threshold"))
-    a1 = aMTC() #Get threshold
-    n1 = nMTC() #Get sample size
-    x1 = 1:n1 #Create sample ids
-    bp = 0 #Set counters
-    rp = 0
-    r = numeric(n1) #Create pvalue vector
-    sim1 = rbinom(n = n1,
-                  size = 1,
-                  prob = 1 - a1) #Use Binomial to generate n2 Bernoulli trials;
-    #Success means p-value will be greater than threshold
-    for (w in 1:n1) {
-      if (sim1[w] == 1) {
-        r[w] = runif(1, (a1 + 0.001) , 0.999)
-        bp = bp + 1
+  
+  # Helper Functions
+  .tileCoordinates <- function(tile = NULL, index = NULL) {
+    row <- -1
+    col <- -1
+    
+    # if: button tile is given, derive from id
+    # else: derive from index
+    if (!is.null(tile)) {
+      # grid-[row]-[col]
+      tile <- strsplit(tile, "-")[[1]]
+      tile <- tile[-1] # remove oxo
+      
+      row <- strtoi(tile[1])
+      col <- strtoi(tile[2])
+    } else {
+      row <- (index - 1) %/% GRID_SIZE + 1
+      col <- index - (GRID_SIZE * (row - 1))
+    }
+    
+    coordinates <- list("row" = row,
+                        "col" = col)
+    
+    return(coordinates)
+  }
+  
+  .tileIndex <- function(tile) {
+    coords <- .tileCoordinates(tile)
+    
+    index = GRID_SIZE * (coords$row - 1) + coords$col
+    
+    return(index)
+  }
+  
+  .btnReset <- function(index) {
+    coords <- .tileCoordinates(index = index)
+    id <- paste0("grid-", coords$row, "-", coords$col)
+    updateButton(
+      session = session,
+      inputId = id,
+      label = "?",
+      disabled = FALSE
+    )
+  }
+  
+  .score <- function(score, tile, value) {
+    i <- .tileCoordinates(tile)
+    
+    score[i$row, i$col] <- value
+    
+    return(score)
+  }
+  
+  .gameCheck <- function(mat) {
+    rows <- rowSums(mat)
+    cols <- colSums(mat)
+    
+    if (GRID_SIZE > 1) {
+      mainD <- sum(diag(mat))
+      rotated <- apply(t(mat), 2, rev)
+      offD <- sum(diag(rotated))
+      
+      if (GRID_SIZE %in% rows ||
+          GRID_SIZE %in% cols ||
+          mainD == GRID_SIZE || offD == GRID_SIZE) {
+        return("win")
+      } else if (-GRID_SIZE %in% rows ||
+                 -GRID_SIZE %in% cols == 1 ||
+                 mainD == -GRID_SIZE || offD == -GRID_SIZE) {
+        return("lose")
+      } else if (any(mat == 0)) {
+        return("continue")
+      } else {
+        return("draw")
       }
-      else{
-        r[w] = runif(1, 0.0001, a1)
-        rp = rp + 1
-      }
-    } #generate p-values
-    #Generate the plot
-    ggplot2::ggplot(data.frame(x1, r), aes(x = x1, y = r)) +
-      ggplot2::geom_point(
-        color = ifelse(r <= a1, "#F2665E", "#1E407C"),
-        shape = 19,
-        size = 3
-      ) +
-      ggplot2::geom_line(y = a1,
-                color = "#3EA39E",
-                size = 1) +
-      labs(
-        title = bquote(
-          "The p-values for " ~ .(n1) ~ " hypothesis tests at " ~ alpha[UT] == .(a1)
-        ),
-        y = "p-value",
-        x = "Test Number",
-        caption = paste("There are", bp, "blue points and", rp, "red points")
-      ) +
-      ggplot2::theme(
-        panel.background = element_rect(fill = 'white', colour = 'black'),
-        plot.caption = element_text(size = 18),
-        text = element_text(size = 18)
-      ) +
-      ggplot2::scale_y_continuous(expand = expansion(mult = 0, add = c(0, 0.05)),
-                         limits = c(0, 1))
+    } else {
+      ifelse(rows == 1 && rows != 0, return("win"), return("lose"))
+    }
+  }
+  
+  .boardBtn <- function(tile) {
+    index <- .tileIndex(tile)
+    activeQuestion <<- gameSet[index, "id"]
+    
+    output$question <- renderUI({
+      withMathJax()
+      return(gameSet[index, "question"])
+    })
+    
+    output$answer <- .ansFunc(index, gameSet)
+    
+    if (gameSet[index, "extraOutput"] != "") {
+      output$extraOutput <- renderText({
+        gameSet[index, "extraOutput"]
+      })
+    } else {
+      output$extraOutput <- NULL
+    }
+    
+    #Retrigger MathJax processing
+    output$trigger1 <- renderUI({
+      withMathJax()
+    })
+    output$trigger2 <- renderUI({
+      withMathJax()
+    })
+    
+    #Enable Submit Button
+    updateButton(session = session,
+                 inputId = "submit",
+                 disabled = FALSE)
+  }
+  
+  .ansFunc <- function(index, df) {
+    if (df[index, "format"] == "numeric") {
+      renderUI({
+        numericInput(inputId = "ans",
+                     label = df[index, "label"],
+                     value = 0)
+      })
+    } else if (df[index, "format"] == "two") {
+      renderUI({
+        radioGroupButtons(
+          inputId = "ans",
+          choices = list(df[index, "A"],
+                         df[index, "B"]),
+          checkIcon = list(
+            yes = icon("check-square"),
+            no = icon("square-o")
+          ),
+          status = "textgame",
+          direction = "horizontal",
+          individual = TRUE
+        )
+      })
+    } else if (df[index, "format"] == "three") {
+      renderUI({
+        radioGroupButtons(
+          inputId = "ans",
+          choices = list(df[index, "A"],
+                         df[index, "B"],
+                         df[index, "C"]),
+          checkIcon = list(
+            yes = icon("check-square"),
+            no = icon("square-o")
+          ),
+          status = "textgame",
+          direction = "vertical"
+        )
+      })
+    } else {
+      renderUI({
+        radioGroupButtons(
+          inputId = "ans",
+          choices = list(df[index, "A"],
+                         df[index, "B"],
+                         df[index, "C"],
+                         df[index, "D"]),
+          checkIcon = list(
+            yes = icon("check-square"),
+            no = icon("square-o")
+          ),
+          status = "textgame",
+          direction = "vertical"
+        )
+      })
+    }
+  }
+  
+  .gameReset <- function() {
+    lapply(1:TILE_COUNT, .btnReset)
+    qSelected <<-
+      sample(seq_len(nrow(questionBank)), size = TILE_COUNT, replace = FALSE)
+    gameSet <<- questionBank[qSelected,]
+    
+    output$question <-
+      renderUI({
+        return("Click a button on the game board to get started on your new game.")
+      })
+    output$answer <- renderUI({
+      ""
+    })
+    output$extraOutput <- renderUI({
+      ""
+    })
+    scoreMatrix <<-
+      matrix(
+        data = rep.int(0, times = TILE_COUNT),
+        nrow = GRID_SIZE,
+        ncol = GRID_SIZE
+      )
+    gameProgress <- FALSE
+    activeBtn <- NA
+    
+    updateButton(session = session,
+                 inputId = "submit",
+                 disabled = TRUE)
+  }
+  
+  .generateStatement <- function(session, verb = NA, object = NA, description = NA) {
+    if(is.na(object)){
+      object <- paste0("#shiny-tab-", session$input$tabs)
+    } else {
+      object <- paste0("#", object)
+    }
+    
+    statement <- rlocker::createStatement(list(
+      verb =  verb,
+      object = list(
+        id = paste0(boastUtils::getCurrentAddress(session), object),
+        name = paste0(APP_TITLE),
+        description = description
+      )
+    ))
+    print(statement)
+    return(rlocker::store(session, statement))   
+  }
+  
+  .generateAnsweredStatement <- function(session, verb = NA, object = NA, description = NA, interactionType = NA, response = NA, success = NA, completion = FALSE) {
+    statement <- rlocker::createStatement(list(
+      verb = verb,
+      object = list(
+        id = paste0(getCurrentAddress(session), "#", object),
+        name = paste0(APP_TITLE),
+        description = paste0("Question ", activeQuestion, ": ", description),
+        interactionType = interactionType
+      ),
+      result = list(
+        success = success,
+        response = response,
+        completion = completion
+        # extensions = list(
+        #   ref = "https://shinyapps.science.psu.edu/scoreMatrix", value = paste(as.data.frame(scoreMatrix), collapse = ", ")
+        #   )
+      )
+    )
+    )
+    
+    # print(statement)
+    return(rlocker::store(session, statement))   
+  }
+  
+  # Define navigation buttons
+  observeEvent(input$go1, {
+    updateTabItems(session, 
+                   inputId = "tabs", 
+                   selected = "Explore")
   })
-
-  # End of Neil Hatfield's code-------------------------------------------------
+  
+  # Read in data and generate the first subset
+  questionBank <-
+    read.csv("questionBank.csv",
+             stringsAsFactors = FALSE,
+             as.is = TRUE)
+  qSelected <-
+    sample(seq_len(nrow(questionBank)), size = TILE_COUNT, replace = FALSE)
+  gameSet <- questionBank[qSelected,]
+  
+  # Program the Reset Button
+  observeEvent(input$reset, {
+    .generateStatement(session, object = "reset", verb = "interacted", description = "game board has been reset.")
+    .gameReset()
+  })
+  
+  # Render game Board / Attach Observers
+  output$gameBoard <- renderUI({
+    board <- list()
+    index <- 1
+    
+    sapply(1:GRID_SIZE, function(row) {
+      sapply(1:GRID_SIZE, function(column) {
+        id <- paste0("grid-", row, "-", column)
+        
+        board[[index]] <<- tags$li(
+          actionButton(
+            inputId = paste0("grid-", row, "-", column),
+            label = "?",
+            color = "primary",
+            style = "bordered",
+            class = "grid-fill"
+          ),
+          class = "grid-tile"
+        )
+        
+        observeEvent(session$input[[id]], {
+          activeBtn <<- id
+          .boardBtn(id)
+          .generateStatement(session, object = activeBtn, verb = "interacted", description = paste0("Tile ", activeBtn, " selected. Rendering question: ", activeQuestion, "."))
+        })
+        
+        index <<- index + 1
+      })
+    })
+    
+    tags$ol(board, class = paste(
+      "grid-board",
+      "grid-fill",
+      paste0("grid-", GRID_SIZE, "x", GRID_SIZE)
+    ))
+  })
+  
+  # Program Submit Button
+  observeEvent(input$submit, {
+    index <- .tileIndex(activeBtn)
+    answer <- ""
+    
+    if (gameSet[index, "format"] == "numeric") {
+      answer <- gameSet[index, "answer"]
+    } else {
+      answer <- gameSet[index, gameSet[index, "answer"]]
+    }
+    
+    success <- input$ans == answer
+    
+    if (success) {
+      updateButton(
+        session = session,
+        inputId = activeBtn,
+        label = player,
+        disabled = TRUE
+      )
+      scoreMatrix <<- .score(scoreMatrix, activeBtn, 1)
+    } else {
+      updateButton(
+        session = session,
+        inputId = activeBtn,
+        label = opponent,
+        disabled = TRUE
+      )
+      scoreMatrix <<- .score(scoreMatrix, activeBtn,-1)
+    }
+    
+    # Check for game over states
+    .gameState <- .gameCheck(scoreMatrix)
+    completion <- ifelse(.gameState == "continue", FALSE, TRUE)
+    interactionType <- ifelse(gameSet[index,]$format == "numeric", "numeric", "choice")
+    
+    .generateAnsweredStatement(
+      session,
+      object = activeBtn,
+      verb = "answered",
+      description = gameSet[index,]$question,
+      response = input$ans,
+      interactionType = interactionType,
+      success = success,
+      completion = completion
+    )
+    
+    if (.gameState == "win") {
+      .generateStatement(session, object = "game", verb = "completed", description = "Player has won the game.")
+      confirmSweetAlert(
+        session = session,
+        inputId = "endgame",
+        title = "You Win!",
+        text = "You've filled either a row, a column, or a main diagonal. Start over and play a new game.",
+        btn_labels = "Start Over"
+      )
+    } else if (.gameState == "lose") {
+      .generateStatement(session, object = "game", verb = "completed", description = "Player has lost the game.")
+      confirmSweetAlert(
+        session = session,
+        inputId = "endgame",
+        title = "You lose :(",
+        text = "Take a moment to review the concepts and then try again.",
+        btn_labels = "Start Over"
+      )
+    } else if (.gameState == "draw") {
+      .generateStatement(session, object = "game", verb = "completed", description = "game has ended in a draw.")
+      confirmSweetAlert(
+        session = session,
+        inputId = "endgame",
+        title = "Draw!",
+        text = "Take a moment to review the concepts and then try again.",
+        btn_labels = "Start Over"
+      )
+    }
+    updateButton(session = session,
+                 inputId = "submit",
+                 disabled = TRUE)
+  })
+  
+  observeEvent(input$tabs, {
+    if (input$tabs == "game") {
+      if (!gameProgress) {
+        shinyalert(
+          title = "Player Select",
+          text = "Select whether you want to play as O or X.",
+          showConfirmButton = TRUE,
+          confirmButtonText = "Play as X",
+          showCancelButton = TRUE,
+          cancelButtonText = "Play as O"
+        )
+        gameProgress <<- TRUE
+      }
+    }
+    .generateStatement(session, verb = "experienced", description = paste0("Navigated to ", input$tabs, " tab."))
+  }, ignoreInit = TRUE)
+  
+  observeEvent(input$endgame, {
+    .generateStatement(session, object = "endgame", verb = "interacted", description = paste("game has been reset."))
+    .gameReset()
+  })
+  
+  observeEvent(input$shinyalert, {
+    if (input$shinyalert == TRUE) {
+      player <<- "X"
+      opponent <<- "O"
+    }
+    if (input$shinyalert == FALSE) {
+      player <<- "O"
+      opponent <<- "X"
+    }
+    
+    .generateStatement(session, object = "shinyalert", verb = "interacted", description = paste0("User has selected player: ", player))
+    
+    output$player <- renderUI({
+      return(paste0("You are playing as ", player, "."))
+    })
+  })
 }
+# End of code-------------------------------------------------
 
-# Boast App Call ----
-boastUtils::boastApp(ui = ui, server = server)
+
+# Create Shiny App using BOAST App template
+boastApp(ui = ui, server = server)
+# shinyApp(ui = ui, server = server) # For testing purposes only
