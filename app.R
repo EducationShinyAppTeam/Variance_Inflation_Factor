@@ -44,7 +44,7 @@ ui <- list(
     ### Create the sidebar/left navigation menu
     dashboardSidebar(
       sidebarMenu(
-        id = "tabs",
+        id = "pages",
         menuItem("Overview", tabName = "Overview", icon = icon("dashboard")),
         menuItem("Prerequisites", tabName = "Prerequisites", icon = icon("book")),
         menuItem("Explore", tabName = "Explore", icon = icon("wpexplorer")),
@@ -250,7 +250,9 @@ ui <- list(
           among the predictor variables in the model."
               )
               # End of Xigang Zhang's code-----------------------------------------
-            ),
+            )
+            )
+          ),
             #game Page
             tabItem(
               tabName = "game",
@@ -344,13 +346,11 @@ ui <- list(
         )
       )
     )
-  )
-)
 # Define server logic
 server <- function(input, output, session) {
   ## Define what each button does
   observeEvent(input$go1, {
-    updateTabItems(session, "tabs", "Explore")
+    updateTabItems(session, "pages", "Explore")
   })
   # Variables
   activeBtn <- NA
