@@ -206,7 +206,7 @@ ui <- list(
             ),
             ## Sesame street tab ----
             tabPanel(
-              title = "Sesame.Stdata",
+              title = "Sesame.St data",
               br(),
               p(
                 "In this portion, you'll explore whether or not two continuous variables

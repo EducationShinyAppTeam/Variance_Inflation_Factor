@@ -1,0 +1,19 @@
+id,question,format,label,A,B,C,D,extraOutput,answer
+1,"Can we easily say when correlation is larger than 0.7 within p-value smaller than 0.05, there will have collinearity Problem?",numeric,Number of tests,,,,,,No
+2,"In what kind of situation, there will have Multicollinearity Problem?",numeric,Number of tests,A situation in which two or more explanatory variables in a multiple regression model are highly linearly related.,Any situtaion will have,There won't be any Multicollinearity Problem at all,Only when simple linear regression model,,A
+3,"Based on the Output table in the picture, which of the following variable most likely to have collinearity problem?""",four,Choices,Weight S,Fat S,Activity S,Fat S*Weight S,<img src='VIF1.png' height='150' width='500' align='middle' alt='a VIF table'>,B
+4,"Based on the Output table in the picture, which of the following variable most likely to have collinearity problem?""",four,Choices,atemp,temp,windspeed,registered,<img src='CIQ4.png' height='150' width='400' align='middle' alt='a confidence stretches from 22 to about 25.5; a point labelled mean<img <img src='VIF2.png' height='150' width='500' align='middle' alt='a VIF table'>,A
+5,What's the negative influence when there is Collinearity Problem? ,four,Choices,Make stronger power for your model,No bad influence,Inflate the variance of at least one estimated regression coefficient,Smaller the P-value,,C
+6,What's the relationship between VIF scores with Collinearity Problem?,four,Choices,A VIF between 5 and 10 indicates high correlation that may be problematic. ,They don't have any relationship,"VIF smaller than 5, you can assume that the regression coefficients are poorly estimated due to multico",I don't know,,A
+7,Is collinearity must be remove?,four,Choices,"Yes, we must solved collinearity problem","Not really, when the overall test that all indicators have coefficients of zero is unaffected by the high VIFs. And nothing else in the regression is affected.",,,,B
+8,"Based on the Output table in the picture, which of the following variable most likely to have collinearity problem?"" average, drug A works faster than drug B?",four,Choices,Age,BSA,Dur,None,<img src='VIF3.png' height='150' width='500' align='middle' alt='a VIF table'>,D
+9,"Based on the Output table in the picture, which of the following variable most likely to have collinearity problem?""",four,Choices,Hours,Capacity,LoadFactor,Population,<img src='VIF4.png' height='150' width='500' align='middle' alt='a VIF table'>,B
+10,"Based on the Output table in the picture, which of the following variable most likely to have collinearity problem?""",four,Choices,viewcat,improvecalsf:prenumb,site,prenumb,<img src='VIF5.png' height='150' width='500' align='middle' alt='a VIF table'>,B
+11,"Can we say if there is collinearity Problem, the regression model is not working?",four,Choices,No,Yes,,,,A
+12,How can we solve the collinearity problem?,four,Choices,Increase Sample Size,We can do nothing,Remove that variable,Ask your professor Lol,,A
+13,"When VIF scores is larger than 5 or 10, shall me must remove that variable?",four,Choices,Of course,Sure,It depends,Defenitily Not!,,B
+14,"Can we say correlation is higher, VIF is higher?",four,Choices,"Yes, higher correlation higher Collernaity",Ask your professor Lol,"I think yes, but don't know the reason",No there is no direct relationship between them,,D
+15,How we define the relationship with VIF and Tolerance?,four,Choices,"Larger than 1, can't accpet",1 to inifity we can accept,1 to 10,From 5 to 10,,D
+16,Which VIF scores might be considered influecen model?,four,Choices,0.999,0.799,3.999,5.999,,D
+17,What is VIF ?,four,Choices,Very important factor,Variance inflation factor,Vector in factor,The sample mean,,B
+18,What is \(\overline{x}\) ?,four,Choices,The population proportion,The sample proportion,The population mean,The sample mean,,D
