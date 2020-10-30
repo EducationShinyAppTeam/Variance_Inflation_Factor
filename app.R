@@ -186,8 +186,8 @@ ui <- list(
                     label = "Select your predictors",
                     choices = list(
                      "Temperature" = "temp",
-                      "humidity",
-                      "windspeed",
+                      "Humidity" = "humidity",
+                      "Windspeed" = "windspeed",
                      "Air Temperature" = "atemp"
                     )
                   )
@@ -211,10 +211,7 @@ ui <- list(
           how much the variance is inflated. But what variance?
           Recall that we learned previously that the standard errors —
           and hence the variances — of the estimated coefficients are inflated when multicollinearity exists.
-          A variance inflation factor exists for each of the predictors in a multiple regression model.
-          The variance inflation factor for the estimated regression coefficient bj —denoted
-          VIFj —is just the factor by which the variance of bj is inflated by the existence of correlation
-          among the predictor variables in the model."
+          A variance inflation factor exists for each of the predictors in a multiple regression model."
               )
             ),
             ## Sesame street tab ----
@@ -237,7 +234,7 @@ including knowledge of body parts, letters, numbers, etc."
                     label = "Select your predictors",
                     choices = list(
                       "Pre-exam number skill scores" = "prenumb",
-                      "age",
+                      "Age" = "age",
                       "Encourage see Sesame" = "encour",
                       "View Frequency" = "viewcat",
                       "Place watching Sesame" = "site",
@@ -264,6 +261,52 @@ including knowledge of body parts, letters, numbers, etc."
           The variance inflation factor for the estimated regression coefficient bj —denoted
           VIFj —is just the factor by which the variance of bj is inflated by the existence of correlation
           among the predictor variables in the model."
+              )
+            ),
+            #####AmesHousingPrice Dataset
+            tabPanel(
+              title = "AmesHousingPrice Data",
+              br(),
+              p(
+                "Summon the data described by De Cock(2011) where 82 fields were recored for 2,930 properties
+in Ames IA."
+              ),
+              fluidRow(
+                column(
+                  width = 4,
+                  h3("Controls"),
+                  checkboxGroupInput(
+                    inputId = "AmesHousePredSelect",
+                    label = "Select your predictors",
+                    chocices = list(
+                      "Lot Frontage" = "Lot Frontage",
+                      "Lot Area" = "Lot Area",
+                      "Year Built"= "Year Built",
+                      "Garage Area" = "Garage Area",
+                      "Groung living area" = "Gr Liv Area",
+                      "Total Basement Area" = "Total Bsmt SF",
+                      "Garage Year Bulit" = "GarageYrBlt",
+                      "1st Floor Area" = "1st Flr SF",
+                      "2nd Floor Area" = "2nd Flr SF"
+                    )
+                  )
+                ),
+                column(
+                  8,
+                  h3("Result"),
+                  DT::dataTableOutput("viftable2"),
+                  bsPopover(
+                    id = "VIFtable",
+                    title = "VIF Result!",
+                    content = "what happens when VIF is larger than 10?",
+                    placement = "top"
+                  )
+                )
+              ),
+              br(),
+              p(
+                tags$em("Note"),
+                ":Just think about what's relationship between Floor Area and living Area."
               )
             )
           )
@@ -443,6 +486,32 @@ server <- function(input, output, session) {
       searching = FALSE,
       info = FALSE
     )
+  )
+  AmesHousingPrice <- read.csv("AmesHousingClean.csv",
+ stringsAsFactors = FALSE,
+  as.is = TRUE
+  )
+  ah <- eventReactive(
+  eventExpr = input$AmesHousePredSelect,
+  valueExpr = {
+  lm(
+  formula = as.formula(paste("SalePrice ~", paste(input$AmesHousingClean, collapse = "+"))),
+  data = AmesHousingClean
+  )
+  }
+  )
+  output$viftable2 <- DT::renderDataTable(
+  expr = data.frame(VIF = round(vif(ah()), digits = 4)),
+  options = list(
+  responsive = TRUE,
+  scrollx = FALSE,
+  ordering = FALSE,
+  paging = FALSE,
+  lengthChange = FALSE,
+  pageLength = 9,
+  searching = FALSE,
+  info = FALSE
+  )
   )
   
   # Helper Functions
