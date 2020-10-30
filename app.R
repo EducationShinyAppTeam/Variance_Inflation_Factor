@@ -13,7 +13,7 @@ GRID_SIZE <- 3
 TILE_COUNT <- GRID_SIZE ^ 2
 
 # App Meta Data----------------------------------------------------------------
-APP_TITLE  <<- "VIF" # Xigang, this needs to be the spelled out
+APP_TITLE  <<- "Variance Inflation Factor" # Xigang, this needs to be the spelled out
 APP_DESCP  <<- paste(
   "This app this for letting students know VIF scores",
   "using in Regression and also collinearity problem."
@@ -22,9 +22,6 @@ APP_DESCP  <<- paste(
 
 # Xigang, remove any comments that don't pertain to your app, including the
 # comments I put into the sample app file you worked from.
-
-# Load additional dependencies and setup functions
-# source("global.R")
 
 # Define UI for App
 ui <- list(
@@ -40,7 +37,7 @@ ui <- list(
     skin = "black",
     ### Create the app header
     dashboardHeader(
-      title = "VIF", # Xigang, let's use something more informative
+      title = "Variance Inflation Factor", # Xigang, let's use something more informative
       tags$li(class = "dropdown", actionLink("info", icon("info"))),
       # Xigang, add the Comment button
       tags$li(class = "dropdown",
@@ -72,11 +69,11 @@ ui <- list(
           withMathJax(),
           # Xigang, you are over-relying on the initialism VIF. You need to say
           # what that stands for.
-          h1("VIF & Collinearity Problem for BOAST Apps"), # This should be the full name.
+          h1("Variance Infation Factor(VIF) & Collinearity Problem for BOAST Apps"), # This should be the full name.
           p("This is a Shiny application for BOAST for VIF & Collineraity Problem."),
           h2("Instructions"),
           # Xigang, you need to watch long code lines
-          p("In this Chapter, you will directly learn what's VIF and what's causing Collinearity Problem."),
+          p("You will directly learn what's VIF and what's causing Collinearity Problem."),
           # Xigang, "In this Chapter"? is a strange thing to say
           tags$ol(
             tags$li("Review any prerequiste ideas using the Prerequistes tab."),
@@ -106,7 +103,7 @@ ui <- list(
             br(),
             br(),
             br(),
-            div(class = "updated", "Last Update: 10/01/2020 by XGZ.")
+            div(class = "updated", "Last Update: 10/30/2020 by XGZ.")
           )
         ),
         #### Set up the Prerequisites Page
@@ -121,7 +118,7 @@ ui <- list(
           p("In order to get the most out of this app, please review the
             following:"),
           tags$ul(
-            tags$li("VIF is the quotient of the variance in a model with multiple terms by
+            tags$li("Variance Inflation Factor(VIF) is the quotient of the variance in a model with multiple terms by
                     the variance of a model with one term alone. It quantifies the severity
                     of multicollinearity in an ordinary least squares regression analysis. "),
             tags$li("It provides an index that measures how much the variance
@@ -135,15 +132,6 @@ ui <- list(
           p("A VIF of 1 means that there is no correlation among the jth predictor and the remaining predictor variables,
             and hence the variance of bj is not inflated at all."),
           box(
-            title = strong("How to determine the Collenarity Problem?"),
-            status = "primary",
-            collapsible = TRUE,
-            collapsed = TRUE,
-            width = '100%',
-            "The general rule of thumb is that VIFs exceeding 4 warrant further investigation,
-            while VIFs exceeding 10 are signs of serious multicollinearity requiring correction."
-          ),
-          box(
             title = strong("What's Collenarity Problem?"),
             status = "primary",
             collapsible = TRUE,
@@ -155,14 +143,20 @@ ui <- list(
             The precision of the estimated regression coefficients decreases as more predictors are added to the model
             The marginal contribution of any one predictor variable in reducing the error sum of squares depends on which other predictors are already in the model.
             Hypothesis tests for βk = 0 may yield different conclusions depending on which predictors are in the model."
+          ),
+          box(
+            title = strong("How to determine the Collenarity Problem?"),
+            status = "primary",
+            collapsible = TRUE,
+            collapsed = TRUE,
+            width = '100%',
+            "The general rule of thumb is that VIFs exceeding 4 warrant further investigation,
+            while VIFs exceeding 10 are signs of serious multicollinearity requiring correction."
 
           )
         ),
         # Xigang, see my prior comment about removing comments not realted to your
         # app
-        #### Note: you must have at least one of the following pages. You might
-        #### have more than one type and/or more than one of the same type. This
-        #### will be up to you and the goals for your app.
         #### Set up an Explore Page
         tabItem(
           tabName = "Explore",
@@ -178,33 +172,23 @@ ui <- list(
               # what is going on.
               br(),
               p(
-                "In this portion, you'll explore whether or not two continuous variables
-            would have Collinearity problem by selecting different variables.
-            You are able to control only one aspects: 1) the type of variables."
+                "This dataset comes from bike rental demand in the Capital Bikeshare 
+                program in Washington, D.C. And you will explore whether or not variables 
+                would have collineartiy problem. Remember you must select at least two variables"
               ),
               fluidRow(
                 column(
                   # Xigang, be explicit: width = 4
-                  4,
+                  width = 4,
                   h3("Controls"),
-                  selectInput(
-                    inputId = "DCbike",
-                    label = "Select your interested variable",
-                    choices = c('Windspeed','Humidity','Tempeture')
-                  ),
-                  br(),
-                  selectInput(
-                    inputId = "DCbike",
-                    label = "Select your another interested variable",
-                    choices = c('Windspeed','Humidity','Tempeture')
-                  ),
                   checkboxGroupInput(
                     inputId = "bikePredSelect",
                     label = "Select your predictors",
                     choices = list(
-                      "Windspeed",
-                      "Humidity",
-                      "Temperature"
+                      "temp",
+                      "humidity",
+                      "windspeed",
+                      "atemp"
                     )
                   )
                 ),
@@ -403,7 +387,7 @@ server <- function(input, output, session) {
 
   #VIF TABLE
   BikeSharing <- read.csv(
-    file = "BikeSharing.csv",
+    file = "DCbikeSharing.csv",
     stringsAsFactors = FALSE,
     as.is = TRUE
   )
@@ -412,8 +396,8 @@ server <- function(input, output, session) {
     valueExpr = {
       #Xigang, you'll want to add some sort of error checking here
       lm(
-        formula = as.formula(paste("Rental ~ ", paste(input$bikePredSelect, collapse = "+"))),
-        data = BikeSharing
+        formula = as.formula(paste("count ~ ", paste(input$bikePredSelect, collapse = "+"))),
+        data = DCbikeSharing
       )
     }
   )
