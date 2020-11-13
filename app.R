@@ -25,17 +25,17 @@ APP_DESCP  <<- paste(
 # comments I put into the sample app file you worked from.
 
 #Load Data, and define Global Functions and Variables----
-BikeSharing <- read.csv(
+bikeSharing <- read.csv(
   file = "DCbikeSharing.csv",
   stringsAsFactors = FALSE,
   as.is = TRUE
 )
-sesame <- read.csv(
+sesameSt <- read.csv(
   file = "sesame.csv",
   stringsAsFactors = FALSE,
   as.is = TRUE
 )
-AmesHousingClean <- read.csv(
+amesHousing <- read.csv(
   file = "AmesHousingClean.csv",
   stringsAsFactors = FALSE,
   as.is = TRUE
@@ -168,12 +168,12 @@ ui <- list(
             width = '100%',
             "The general rule of thumb is that VIFs exceeding 4 warrant further investigation,
             while VIFs exceeding 10 are signs of serious multicollinearity requiring correction."
-            
+
           )
         ),
         # Xigang, see my prior comment about removing comments not realted to your
         # app
-        #### Set up an Explore Page
+        #### Set up an Explore Page ----
         tabItem(
           tabName = "Explore",
           withMathJax(),
@@ -183,14 +183,14 @@ ui <- list(
           p("It will also be part of Game question."),
           br(),
           selectInput(
-            inputId = 'theDataSet',
-            label = 'Dataset',
+            inputId = 'selectedData',
+            label = 'Select a dataset',
             choices = list(
-              'DCbike',
-              'SesameSt',
-              'AmesHouse'
+              "DC Bike Sharing Data" = "bikeSharing",
+              "Sesame Street" = "sesameSt",
+              "Ames Housing Market" = "amesHousing"
             ),
-            selected = 'DCbike'
+            selected = 'bikeSharing'
           ),
           uiOutput("dataContext"), #In server create the output which explians the selected data set
           fluidRow(
@@ -265,8 +265,8 @@ ui <- list(
           #               # what is going on.
           #               br(),
           #               p(
-          #                 "This dataset comes from bike rental demand in the Capital Bikeshare 
-          #                 program in Washington, D.C. And you will explore whether or not variables 
+          #                 "This dataset comes from bike rental demand in the Capital Bikeshare
+          #                 program in Washington, D.C. And you will explore whether or not variables
           #                 would have collineartiy problem. Remember you must select at least two variables"
           #               ),
           #               fluidRow(
@@ -404,7 +404,7 @@ ui <- list(
           #             )
           #           )
         ),
-        #game Page
+        #game Page ----
         tabItem(
           tabName = "game",
           withMathJax(),
@@ -453,7 +453,7 @@ ui <- list(
             )
           )
         ),
-        #### Set up the References Page-REQUIRED
+        #### References Page ----
         tabItem(
           tabName = "References",
           withMathJax(),
@@ -499,7 +499,7 @@ ui <- list(
     )
   )
 )
-# Define server logic
+# Define server logic ----
 server <- function(input, output, session) {
   ## Define what each button does
   observeEvent(input$go1, {
@@ -521,8 +521,8 @@ server <- function(input, output, session) {
 #   observeEvent(input$theDataSet, {
 #     if(input$theDataSet == "BikeSharing"){
 #       output$dataContext <- renderUI({
-#         textInput("This dataset comes from bike rental demand in the Capital Bikeshare 
-#                    program in Washington, D.C. And you will explore whether or not variables 
+#         textInput("This dataset comes from bike rental demand in the Capital Bikeshare
+#                    program in Washington, D.C. And you will explore whether or not variables
 #                    would have collineartiy problem. Remember you must select at least two variables")
 #       })
 #       updateCheckboxGroupInput(
@@ -551,7 +551,7 @@ server <- function(input, output, session) {
 #             "View Frequency" = "viewcat",
 #             "Place watching Sesame" = "site",
 #             "Pre-exam form skill scores" = "preform"
-#             
+#
 #           )
 #         )
 #       })
@@ -577,15 +577,15 @@ server <- function(input, output, session) {
 #         )
 #       })
 #     }
-#     
+#
 #   })
   observeEvent(
-    eventExpr = input$theDataSet, 
+    eventExpr = input$selectedData,
     handlerExpr = {
-      if(input$theDataSet == "BikeSharing"){
+      if(input$selectedData == "bikeSharing"){
         output$dataContext <- renderUI({
-          textInput("This dataset comes from bike rental demand in the Capital Bikeshare 
-                   program in Washington, D.C. And you will explore whether or not variables 
+          p("This dataset comes from bike rental demand in the Capital Bikeshare
+                   program in Washington, D.C. And you will explore whether or not variables
                    would have collineartiy problem. Remember you must select at least two variables")
         })
         updateCheckboxGroupInput(
@@ -598,60 +598,60 @@ server <- function(input, output, session) {
             "Air Temperature" = "atemp"
           )
         )
-      } else if(input$theDataSet == "sesame"){
+      } else if(input$selectedData == "sesameSt"){
         output$dataContext <- renderUI({
-          textInput("This dataset evaluated the impact of the first year of the Sesame Street television series.
+          p("This dataset evaluated the impact of the first year of the Sesame Street television series.
                    Sesame Street was concerned mainly with teaching preschool related skills to children.
                    Both before and after viewing the series the chilren were tested on a variety of cognitive variables,
                    including knowledge of body parts, letters, numbers, etc.")
-          updateCheckboxGroupInput(
-            session = session,
-            inputId = "selecteVars",
-            chocies = list(
-              "Pre-exam number skill scores" = "prenumb",
-              "Age" = "age",
-              "Encourage see Sesame" = "encour",
-              "View Frequency" = "viewcat",
-              "Place watching Sesame" = "site",
-              "Pre-exam form skill scores" = "preform"
-            )
-          )
         })
+        updateCheckboxGroupInput(
+          session = session,
+          inputId = "selecteVars",
+          choices = list(
+            "Pre-exam number skill scores" = "prenumb",
+            "Age" = "age",
+            "Encourage see Sesame" = "encour",
+            "View Frequency" = "viewcat",
+            "Place watching Sesame" = "site",
+            "Pre-exam form skill scores" = "preform"
+          )
+        )
       }
-      else if(input$theDataSet == "AmesHousingClean"){
+      else if(input$selectedData == "amesHousing"){
         output$dataContext <- renderUI({
-          textInput("Summon the data described by De Cock(2011) where 82 fields were recored for 2,930 properties
+          p("Summon the data described by De Cock(2011) where 82 fields were recored for 2,930 properties
 # in Ames IA.")
-          updateCheckboxGroupInput(
-            session = session,
-            inputId = "selectVars",
-            chocices = list(
-              "Lot Frontage" = "Lot.Frontage",
-              "Lot Area" = "Lot.Area",
-              "Year Built"= "Year.Built",
-              "Garage Area" = "Garage.Area",
-              "Groung living area" = "Gr.Liv.Area",
-              "Total Basement Area" = "Total.Bsmt.SF",
-              "Garage Year Bulit" = "Garage.Yr.Blt",
-              "1st Floor Area" = "X1st.Flr.SF",
-              "2nd Floor Area" = "X2nd.Flr.SF"
-            )
-          )
         })
+        updateCheckboxGroupInput(
+          session = session,
+          inputId = "selectVars",
+          choices = list(
+            "Lot Frontage" = "Lot.Frontage",
+            "Lot Area" = "Lot.Area",
+            "Year Built"= "Year.Built",
+            "Garage Area" = "Garage.Area",
+            "Groung living area" = "Gr.Liv.Area",
+            "Total Basement Area" = "Total.Bsmt.SF",
+            "Garage Year Bulit" = "Garage.Yr.Blt",
+            "1st Floor Area" = "X1st.Flr.SF",
+            "2nd Floor Area" = "X2nd.Flr.SF"
+          )
+        )
       }
     },
     ignoreNULL = TRUE,
-    ignoreInit = TRUE
+    #ignoreInit = TRUE
   )
   #New sever code for three model tabPanel------
   dataSet <- reactiveVal()
-  observeEvent(input$dataSelect, {
-    if (input$dataSelect == "BikeSharing") {
-      dataSet(dcBikes)
-    } else if (input$dataSelect == "sesame") {
-      dataSet(sesamest)
-    } else if (input$dataSelect == "AmesHousingClean"){
-      dataSet(housing)
+  observeEvent(input$selectedData, {
+    if (input$selectedData == "bikeSharing") {
+      dataSet(bikeSharing)
+    } else if (input$selectedData == "sesameSt") {
+      dataSet(sesameSt)
+    } else if (input$selectedData == "amesHousing"){
+      dataSet(amesHousing)
     } else { # This would be the catch case with obviously fake data
       dataSet(
         data.frame(
@@ -662,13 +662,13 @@ server <- function(input, output, session) {
       )
     }
   })
-  
+
   #server definition
   observeEvent(input$selectedVars, {
     ## Scatter plots----------
     output$scatterplots <- renderPlot({
       ggpairs(
-        data = dataSet, 
+        data = dataSet,
         columns = input$selectVars,
         upper = list(continuous = "points"),
         lower = list(continuous = "blank"),
@@ -825,35 +825,35 @@ server <- function(input, output, session) {
   .tileCoordinates <- function(tile = NULL, index = NULL) {
     row <- -1
     col <- -1
-    
+
     # if: button tile is given, derive from id
     # else: derive from index
     if (!is.null(tile)) {
       # grid-[row]-[col]
       tile <- strsplit(tile, "-")[[1]]
       tile <- tile[-1] # remove oxo
-      
+
       row <- strtoi(tile[1])
       col <- strtoi(tile[2])
     } else {
       row <- (index - 1) %/% GRID_SIZE + 1
       col <- index - (GRID_SIZE * (row - 1))
     }
-    
+
     coordinates <- list("row" = row,
                         "col" = col)
-    
+
     return(coordinates)
   }
-  
+
   .tileIndex <- function(tile) {
     coords <- .tileCoordinates(tile)
-    
+
     index = GRID_SIZE * (coords$row - 1) + coords$col
-    
+
     return(index)
   }
-  
+
   .btnReset <- function(index) {
     coords <- .tileCoordinates(index = index)
     id <- paste0("grid-", coords$row, "-", coords$col)
@@ -864,24 +864,24 @@ server <- function(input, output, session) {
       disabled = FALSE
     )
   }
-  
+
   .score <- function(score, tile, value) {
     i <- .tileCoordinates(tile)
-    
+
     score[i$row, i$col] <- value
-    
+
     return(score)
   }
-  
+
   .gameCheck <- function(mat) {
     rows <- rowSums(mat)
     cols <- colSums(mat)
-    
+
     if (GRID_SIZE > 1) {
       mainD <- sum(diag(mat))
       rotated <- apply(t(mat), 2, rev)
       offD <- sum(diag(rotated))
-      
+
       if (GRID_SIZE %in% rows ||
           GRID_SIZE %in% cols ||
           mainD == GRID_SIZE || offD == GRID_SIZE) {
@@ -899,18 +899,18 @@ server <- function(input, output, session) {
       ifelse(rows == 1 && rows != 0, return("win"), return("lose"))
     }
   }
-  
+
   .boardBtn <- function(tile) {
     index <- .tileIndex(tile)
     activeQuestion <<- gameSet[index, "id"]
-    
+
     output$question <- renderUI({
       withMathJax()
       return(gameSet[index, "question"])
     })
-    
+
     output$answer <- .ansFunc(index, gameSet)
-    
+
     if (gameSet[index, "extraOutput"] != "") {
       output$extraOutput <- renderText({
         gameSet[index, "extraOutput"]
@@ -918,7 +918,7 @@ server <- function(input, output, session) {
     } else {
       output$extraOutput <- NULL
     }
-    
+
     #Retrigger MathJax processing
     output$trigger1 <- renderUI({
       withMathJax()
@@ -926,13 +926,13 @@ server <- function(input, output, session) {
     output$trigger2 <- renderUI({
       withMathJax()
     })
-    
+
     #Enable Submit Button
     updateButton(session = session,
                  inputId = "submit",
                  disabled = FALSE)
   }
-  
+
   .ansFunc <- function(index, df) {
     if (df[index, "format"] == "numeric") {
       renderUI({
@@ -988,13 +988,13 @@ server <- function(input, output, session) {
       })
     }
   }
-  
+
   .gameReset <- function() {
     lapply(1:TILE_COUNT, .btnReset)
     qSelected <<-
       sample(seq_len(nrow(questionBank)), size = TILE_COUNT, replace = FALSE)
     gameSet <<- questionBank[qSelected,]
-    
+
     output$question <-
       renderUI({
         return("Click a button on the game board to get started on your new game.")
@@ -1013,19 +1013,19 @@ server <- function(input, output, session) {
       )
     gameProgress <- FALSE
     activeBtn <- NA
-    
+
     updateButton(session = session,
                  inputId = "submit",
                  disabled = TRUE)
   }
-  
+
   .generateStatement <- function(session, verb = NA, object = NA, description = NA) {
     if(is.na(object)){
       object <- paste0("#shiny-tab-", session$input$tabs)
     } else {
       object <- paste0("#", object)
     }
-    
+
     statement <- rlocker::createStatement(list(
       verb =  verb,
       object = list(
@@ -1037,7 +1037,7 @@ server <- function(input, output, session) {
     print(statement)
     return(rlocker::store(session, statement))
   }
-  
+
   .generateAnsweredStatement <- function(session, verb = NA, object = NA, description = NA, interactionType = NA, response = NA, success = NA, completion = FALSE) {
     statement <- rlocker::createStatement(list(
       verb = verb,
@@ -1057,18 +1057,18 @@ server <- function(input, output, session) {
       )
     )
     )
-    
+
     # print(statement)
     return(rlocker::store(session, statement))
   }
-  
+
   # Define navigation buttons
   observeEvent(input$go1, {
     updateTabItems(session,
                    inputId = "tabs",
                    selected = "Explore")
   })
-  
+
   # Read in data and generate the first subset
   questionBank <-
     read.csv("questionBank.csv",
@@ -1077,22 +1077,22 @@ server <- function(input, output, session) {
   qSelected <-
     sample(seq_len(nrow(questionBank)), size = TILE_COUNT, replace = FALSE)
   gameSet <- questionBank[qSelected,]
-  
+
   # Program the Reset Button
   observeEvent(input$reset, {
     .generateStatement(session, object = "reset", verb = "interacted", description = "game board has been reset.")
     .gameReset()
   })
-  
+
   # Render game Board / Attach Observers
   output$gameBoard <- renderUI({
     board <- list()
     index <- 1
-    
+
     sapply(1:GRID_SIZE, function(row) {
       sapply(1:GRID_SIZE, function(column) {
         id <- paste0("grid-", row, "-", column)
-        
+
         board[[index]] <<- tags$li(
           actionButton(
             inputId = paste0("grid-", row, "-", column),
@@ -1103,37 +1103,37 @@ server <- function(input, output, session) {
           ),
           class = "grid-tile"
         )
-        
+
         observeEvent(session$input[[id]], {
           activeBtn <<- id
           .boardBtn(id)
           .generateStatement(session, object = activeBtn, verb = "interacted", description = paste0("Tile ", activeBtn, " selected. Rendering question: ", activeQuestion, "."))
         })
-        
+
         index <<- index + 1
       })
     })
-    
+
     tags$ol(board, class = paste(
       "grid-board",
       "grid-fill",
       paste0("grid-", GRID_SIZE, "x", GRID_SIZE)
     ))
   })
-  
+
   # Program Submit Button
   observeEvent(input$submit, {
     index <- .tileIndex(activeBtn)
     answer <- ""
-    
+
     if (gameSet[index, "format"] == "numeric") {
       answer <- gameSet[index, "answer"]
     } else {
       answer <- gameSet[index, gameSet[index, "answer"]]
     }
-    
+
     success <- input$ans == answer
-    
+
     if (success) {
       updateButton(
         session = session,
@@ -1151,12 +1151,12 @@ server <- function(input, output, session) {
       )
       scoreMatrix <<- .score(scoreMatrix, activeBtn,-1)
     }
-    
+
     # Check for game over states
     .gameState <- .gameCheck(scoreMatrix)
     completion <- ifelse(.gameState == "continue", FALSE, TRUE)
     interactionType <- ifelse(gameSet[index,]$format == "numeric", "numeric", "choice")
-    
+
     .generateAnsweredStatement(
       session,
       object = activeBtn,
@@ -1167,7 +1167,7 @@ server <- function(input, output, session) {
       success = success,
       completion = completion
     )
-    
+
     if (.gameState == "win") {
       .generateStatement(session, object = "game", verb = "completed", description = "Player has won the game.")
       confirmSweetAlert(
@@ -1200,7 +1200,7 @@ server <- function(input, output, session) {
                  inputId = "submit",
                  disabled = TRUE)
   })
-  
+
   observeEvent(input$tabs, {
     if (input$tabs == "game") {
       if (!gameProgress) {
@@ -1217,12 +1217,12 @@ server <- function(input, output, session) {
     }
     .generateStatement(session, verb = "experienced", description = paste0("Navigated to ", input$tabs, " tab."))
   }, ignoreInit = TRUE)
-  
+
   observeEvent(input$endgame, {
     .generateStatement(session, object = "endgame", verb = "interacted", description = paste("game has been reset."))
     .gameReset()
   })
-  
+
   observeEvent(input$shinyalert, {
     if (input$shinyalert == TRUE) {
       player <<- "X"
@@ -1232,9 +1232,9 @@ server <- function(input, output, session) {
       player <<- "O"
       opponent <<- "X"
     }
-    
+
     .generateStatement(session, object = "shinyalert", verb = "interacted", description = paste0("User has selected player: ", player))
-    
+
     output$player <- renderUI({
       return(paste0("You are playing as ", player, "."))
     })
