@@ -182,9 +182,10 @@ ui <- list(
             VIF table and ANOVA table to see if there is Collinearity Problem"),
           p("It will also be part of Game question."),
           br(),
+          h3("Select a dataset"),
           selectInput(
             inputId = 'selectedData',
-            label = 'Select a dataset',
+            label = "",
             choices = list(
               "DC Bike Sharing Data" = "bikeSharing",
               "Sesame Street" = "sesameSt",
@@ -196,10 +197,10 @@ ui <- list(
           fluidRow(
             column(
               width = 4,
-              h3("Controls"),
+              h3("Select your predictors"),
               checkboxGroupInput(
                 inputId = "selectedVars",
-                label = "Select your predictors",
+                label = "At least two variables",
                 choices = c("filler")
               ),
               tabsetPanel(
@@ -255,154 +256,6 @@ ui <- list(
               )
             )
           )
-          #           tabsetPanel(
-          #             type = "tabs",
-          #             ### VIF Examples tab----
-          #             tabPanel(
-          #               title = "DC bike Sharing Data",
-          #               # Xigang, be sure that you have a paragraph explaining the context
-          #               # of the data collection, otherwise your user won't really know
-          #               # what is going on.
-          #               br(),
-          #               p(
-          #                 "This dataset comes from bike rental demand in the Capital Bikeshare
-          #                 program in Washington, D.C. And you will explore whether or not variables
-          #                 would have collineartiy problem. Remember you must select at least two variables"
-          #               ),
-          #               fluidRow(
-          #                 column(
-          #                   # Xigang, be explicit: width = 4
-          #                   width = 4,
-          #                   h3("Controls"),
-          #                   checkboxGroupInput(
-          #                     inputId = "bikePredSelect",
-          #                     label = "Select your predictors",
-          #                     choices = list(
-          #                       "Temperature" = "temp",
-          #                       "Humidity" = "humidity",
-          #                       "Windspeed" = "windspeed",
-          #                       "Air Temperature" = "atemp"
-          #                     )
-          #                   )
-          #                 ),
-          #                 column(
-          #                   8,
-          #                   h3("Result"),
-          #                   DT::dataTableOutput("Viftable"),
-          #                   bsPopover(
-          #                     id = "VIFtable",
-          #                     title = "VIF Result!",
-          #                     content = "What happens when VIF is larger than 10?",
-          #                     placement = "top"
-          #                   )
-          #                 )
-          #               ),
-          #               br(),
-          #               p(
-          #                 tags$em("Note"),
-          #                 ": As the name suggests, a variance inflation factor (VIF) quantifies
-          #           how much the variance is inflated. But what variance?
-          #           Recall that we learned previously that the standard errors —
-          #           and hence the variances — of the estimated coefficients are inflated when multicollinearity exists.
-          #           A variance inflation factor exists for each of the predictors in a multiple regression model."
-          #               )
-          #             ),
-          #             ## Sesame street tab ----
-          #             tabPanel(
-          #               # Xigang, title should be Sesame Street Data
-          #               title = "Sesame Street data",
-          #               br(),
-          #               p(
-          #                 "This dataset evaluated the impact of the first year of the Sesame Street television series.
-          # Sesame Street was concerned mainly with teaching preschool related skills to children.
-          # Both before and after viewing the series the chilren were tested on a variety of cognitive variables,
-          # including knowledge of body parts, letters, numbers, etc."
-          #               ),
-          #               fluidRow(
-          #                 column(
-          #                   width = 4,
-          #                   h3("Controls"),
-          #                   checkboxGroupInput(
-          #                     inputId = "sesamePredSelect",
-          #                     label = "Select your predictors",
-          #                     choices = list(
-          #                       "Pre-exam number skill scores" = "prenumb",
-          #                       "Age" = "age",
-          #                       "Encourage see Sesame" = "encour",
-          #                       "View Frequency" = "viewcat",
-          #                       "Place watching Sesame" = "site",
-          #                       "Pre-exam form skill scores" = "preform"
-          #                     )
-          #                   )
-          #                 ),
-          #                 column(
-          #                   8,
-          #                   h3("Result"),
-          #                   DT::dataTableOutput("viftable1"),
-          #                   bsPopover(
-          #                     id = "VIFtable",
-          #                     title = "VIF Result!",
-          #                     content = "What happens when VIF is larger than 10?",
-          #                     placement = "top"
-          #                   )
-          #                 )
-          #               ),
-          #               br(),
-          #               p(
-          #                 tags$em("Note"),
-          #                 ":
-          #           The variance inflation factor for the estimated regression coefficient bj —denoted
-          #           VIFj —is just the factor by which the variance of bj is inflated by the existence of correlation
-          #           among the predictor variables in the model."
-          #               )
-          #             ),
-          #             #####AmesHousingPrice Dataset
-          #             tabPanel(
-          #               title = "AmesHousingPrice Data",
-          #               br(),
-          #               p(
-          #                 "Summon the data described by De Cock(2011) where 82 fields were recored for 2,930 properties
-          # in Ames IA."
-          #               ),
-          #               fluidRow(
-          #                 column(
-          #                   width = 4,
-          #                   h3("Controls"),
-          #                   checkboxGroupInput(
-          #                     inputId = "AmesHousePredSelect",
-          #                     label = "Select your predictors",
-          #                     choices = list(
-          #                       "Lot Frontage" = "Lot.Frontage",
-          #                       "Lot Area" = "Lot.Area",
-          #                       "Year Built"= "Year.Built",
-          #                       "Garage Area" = "Garage.Area",
-          #                       "Groung living area" = "Gr.Liv.Area",
-          #                       "Total Basement Area" = "Total.Bsmt.SF",
-          #                       "Garage Year Bulit" = "Garage.Yr.Blt",
-          #                       "1st Floor Area" = "X1st.Flr.SF",
-          #                       "2nd Floor Area" = "X2nd.Flr.SF"
-          #                     )
-          #                   )
-          #                 ),
-          #                 column(
-          #                   8,
-          #                   h3("Result"),
-          #                   DT::dataTableOutput("viftable2"),
-          #                   bsPopover(
-          #                     id = "VIFtable",
-          #                     title = "VIF Result!",
-          #                     content = "what happens when VIF is larger than 10?",
-          #                     placement = "top"
-          #                   )
-          #                 )
-          #               ),
-          #               br(),
-          #               p(
-          #                 tags$em("Note"),
-          #                 ":Just think about what's relationship between Floor Area and living Area."
-          #               )
-          #             )
-          #           )
         ),
         #game Page ----
         tabItem(
@@ -518,67 +371,6 @@ server <- function(input, output, session) {
     )
   gameProgress <- FALSE
   #New server code for Dataset Control-------
-#   observeEvent(input$theDataSet, {
-#     if(input$theDataSet == "BikeSharing"){
-#       output$dataContext <- renderUI({
-#         textInput("This dataset comes from bike rental demand in the Capital Bikeshare
-#                    program in Washington, D.C. And you will explore whether or not variables
-#                    would have collineartiy problem. Remember you must select at least two variables")
-#       })
-#       updateCheckboxGroupInput(
-#         session = session,
-#         inputId = "selectedVars",
-#         choices = list(
-#           "Temperature" = "temp",
-#           "Humidity" = "humidity",
-#           "Windspeed" = "windspeed",
-#           "Air Temperature" = "atemp"
-#         )
-#       )
-#     } else if(input$theDataSet == "sesame"){
-#       output$dataContext <- renderUI({
-#         textInput("This dataset evaluated the impact of the first year of the Sesame Street television series.
-#                    Sesame Street was concerned mainly with teaching preschool related skills to children.
-#                    Both before and after viewing the series the chilren were tested on a variety of cognitive variables,
-#                    including knowledge of body parts, letters, numbers, etc.")
-#         updateCheckboxGroupInput(
-#           session = session,
-#           inputId = "selecteVars",
-#           chocies = list(
-#             "Pre-exam number skill scores" = "prenumb",
-#             "Age" = "age",
-#             "Encourage see Sesame" = "encour",
-#             "View Frequency" = "viewcat",
-#             "Place watching Sesame" = "site",
-#             "Pre-exam form skill scores" = "preform"
-#
-#           )
-#         )
-#       })
-#     }
-#     else if(input$theDataSet == "AmesHousingClean"){
-#       output$dataContext <- renderUI({
-#         textInput("Summon the data described by De Cock(2011) where 82 fields were recored for 2,930 properties
-# # in Ames IA.")
-#         updateCheckboxGroupInput(
-#           session = session,
-#           inputId = "selectVars",
-#           chocices = list(
-#             "Lot Frontage" = "Lot.Frontage",
-#             "Lot Area" = "Lot.Area",
-#             "Year Built"= "Year.Built",
-#             "Garage Area" = "Garage.Area",
-#             "Groung living area" = "Gr.Liv.Area",
-#             "Total Basement Area" = "Total.Bsmt.SF",
-#             "Garage Year Bulit" = "Garage.Yr.Blt",
-#             "1st Floor Area" = "X1st.Flr.SF",
-#             "2nd Floor Area" = "X2nd.Flr.SF"
-#           )
-#         )
-#       })
-#     }
-#
-#   })
   observeEvent(
     eventExpr = input$selectedData,
     handlerExpr = {
@@ -586,7 +378,7 @@ server <- function(input, output, session) {
         output$dataContext <- renderUI({
           p("This dataset comes from bike rental demand in the Capital Bikeshare
                    program in Washington, D.C. And you will explore whether or not variables
-                   would have collineartiy problem. Remember you must select at least two variables")
+                   would have collineartiy problem.")
         })
         updateCheckboxGroupInput(
           session = session,
@@ -607,7 +399,7 @@ server <- function(input, output, session) {
         })
         updateCheckboxGroupInput(
           session = session,
-          inputId = "selecteVars",
+          inputId = "selectedVars",
           choices = list(
             "Pre-exam number skill scores" = "prenumb",
             "Age" = "age",
@@ -625,7 +417,7 @@ server <- function(input, output, session) {
         })
         updateCheckboxGroupInput(
           session = session,
-          inputId = "selectVars",
+          inputId = "selectedVars",
           choices = list(
             "Lot Frontage" = "Lot.Frontage",
             "Lot Area" = "Lot.Area",
@@ -669,7 +461,7 @@ server <- function(input, output, session) {
     output$scatterplots <- renderPlot({
       ggpairs(
         data = dataSet,
-        columns = input$selectVars,
+        columns = input$selectedVars,
         upper = list(continuous = "points"),
         lower = list(continuous = "blank"),
         diag = list(continuous = "blankDiag")
@@ -679,13 +471,13 @@ server <- function(input, output, session) {
     })
     ## Fit the Model------#y not informative "ifelse
     responseVar <- eventReactive(
-      eventExpr = input$dataSelect,
+      eventExpr = input$selectedData,
       valueExpr = {
-        if(input$dataSelect == "BikeSharing"){
+        if(input$selectedData == "bikeSharing"){
           "count"
-        } else if (input$dataSelect == "sesame") {
+        } else if (input$selectedData == "sesameSt") {
           "improvenumb"
-        } else if (input$dataSelect == "AmesHousingClean") {
+        } else if (input$selectedData == "amesHousing") {
           "price"
         } else {
           "Y"
@@ -730,97 +522,6 @@ server <- function(input, output, session) {
       )
     )
   })
-  #VIF TABLE--------
-  # BikeSharing <- read.csv(
-  #   file = "DCbikeSharing.csv",
-  #   stringsAsFactors = FALSE,
-  #   as.is = TRUE
-  # )
-  # dc <- eventReactive(
-  #   eventExpr = input$bikePredSelect,
-  #   valueExpr = {
-  #     #Xigang, you'll want to add some sort of error checking here
-  #     lm(
-  #       formula = as.formula(paste("count ~ ", paste(input$bikePredSelect, collapse = "+"))),#input$select
-  #       data = DCbikeSharing#dataset
-  #     )
-  #   }
-  # )
-  # output$Viftable <- DT::renderDataTable(
-  #   expr = data.frame(VIF = round(vif(dc()), digits = 4)),
-  #   options = list(
-  #     responsive = TRUE,
-  #     scrollx = FALSE,
-  #     ordering = FALSE,
-  #     paging = FALSE,
-  #     lengthChange = FALSE,
-  #     pageLeength = 4,
-  #     searching = FALSE,
-  #     info = FALSE
-  #   )
-  # )
-  # Xigang, you'll want to add your options here
-  # Xigang, you'll want to take what we did for the bike sharing and duplicate
-  # that for the other data sets.
-  # Xigang, perhaps instead of using tabs like you currently do, you use a
-  # selectInput for the data set and the pages/options update. That would let you
-  # leverage your code more efficiently (i.e., you don't have to repeat yourself)
-  # sesame <-
-  #   read.csv("sesame.csv",
-  #            stringsAsFactors = FALSE,
-  #            as.is = TRUE
-  #   )
-  # ss <- eventReactive(
-  #   eventExpr = input$sesamePredSelect,
-  #   valueExpr = {
-  #     lm(
-  #       formula = as.formula(paste("improvenumb ~", paste(input$sesamePredSelect, collapse = "+"))),
-  #       data = sesame
-  #     )
-  #   }
-  # )
-  # output$viftable1 <- DT::renderDataTable(
-  #   expr = data.frame(VIF = round(vif(ss()), digits = 4)),
-  #   options = list(
-  #     responsive = TRUE,
-  #     scrollx = FALSE,
-  #     ordering = FALSE,
-  #     paging = FALSE,
-  #     lengthChange = FALSE,
-  #     pageLength = 6,
-  #     searching = FALSE,
-  #     info = FALSE
-  #   )
-  # )
-  # AmesHousingClean <-
-  #   read.csv("AmesHousingClean.csv",
-  #            stringsAsFactors = FALSE,
-  #            as.is = TRUE
-  #   )
-  # ah <- eventReactive(
-  #   eventExpr = input$AmesHousePredSelect,
-  #   valueExpr = {
-  #     print(input$AmesHousePredSelect)
-  #     print(names(AmesHousingClean))
-  #     lm(
-  #       formula = as.formula(paste("SalePrice ~", paste(input$AmesHousePredSelect, collapse = "+"))),
-  #       data = AmesHousingClean
-  #     )
-  #   }
-  # )
-  # output$viftable2 <- DT::renderDataTable(
-  #   expr = data.frame(VIF = round(vif(ah()), digits = 4)),
-  #   options = list(
-  #     responsive = TRUE,
-  #     scrollx = FALSE,
-  #     ordering = FALSE,
-  #     paging = FALSE,
-  #     lengthChange = FALSE,
-  #     pageLength = 9,
-  #     searching = FALSE,
-  #     info = FALSE
-  #   )
-  # )
   # Helper Functions
   .tileCoordinates <- function(tile = NULL, index = NULL) {
     row <- -1
