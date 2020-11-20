@@ -14,9 +14,9 @@ GRID_SIZE <- 3
 TILE_COUNT <- GRID_SIZE ^ 2
 
 # App Meta Data----------------------------------------------------------------
-APP_TITLE  <<- "Variance Inflation Factor" # Xigang, this needs to be the spelled out
+APP_TITLE  <<- "Collinearity"
 APP_DESCP  <<- paste(
-  "This app this for letting students know VIF scores",
+  "This app this for letting students know Variance Inflation Factor scores",
   "using in Regression and also collinearity problem."
 )
 # End App Meta Data------------------------------------------------------------
@@ -40,6 +40,9 @@ amesHousing <- read.csv(
   stringsAsFactors = FALSE,
   as.is = TRUE
 )
+na.omit(DCbikeSharing)####na.rm can't work for ggpairs. Less impact for other two
+na.omit(sesame)
+na.omit(AmesHousingClean)
 # Define UI for App
 ui <- list(
   # Xigang, you don't need this V (it's only needed in the ui.r + server.r setup)
@@ -54,7 +57,7 @@ ui <- list(
     skin = "black",
     ### Create the app header
     dashboardHeader(
-      title = "Variance Inflation Factor", # Xigang, let's use something more informative
+      title = "Collinearity", 
       tags$li(class = "dropdown", actionLink("info", icon("info"))),
       # Xigang, add the Comment button
       tags$li(class = "dropdown",
@@ -79,18 +82,16 @@ ui <- list(
     ### Create the content
     dashboardBody(
       tabItems(
-        #### Set up the Overview Page
+        #### Set up the Overview Page ----
         tabItem(
           tabName = "Overview",
           withMathJax(),
-          # Xigang, you are over-relying on the initialism VIF. You need to say
-          # what that stands for.
-          h1("Variance Infation Factor(VIF) & Collinearity Problem for BOAST Apps"), # This should be the full name.
-          p("This is a Shiny application for BOAST for VIF & Collineraity Problem."),
+          h1("Variance Infation Factor (VIF) & Collinearity Problem"),
+          p("This is a Shiny application for BOAST for VIF & Collineraity
+            Problem."),
           h2("Instructions"),
-          # Xigang, you need to watch long code lines
-          p("You will directly learn what's VIF and what's causing Collinearity Problem."),
-          # Xigang, "In this Chapter"? is a strange thing to say
+          p("You will directly learn what's Variance Infaltion Factor and what's 
+          causing Collinearity Problem."),
           tags$ol(
             tags$li("Review any prerequiste ideas using the Prerequistes tab."),
             tags$li("Explore the Exploration Tab."),
@@ -98,7 +99,7 @@ ui <- list(
           ),
           ##### Go Button--location will depend on your goals
           div(
-            style = "text-align: center",
+            style = "text-align: center;",
             bsButton(
               inputId = "go1",
               label = "GO!",
@@ -114,15 +115,15 @@ ui <- list(
           p(
             "This version of the app was developed and coded by Xigang Zhang",
             br(),
-            "We would like to extend a special thanks to the Neil J. Hatfield,
+            "I would like to extend a special thanks to the Neil J. Hatfield,
              Robert P. Carey, III.",
             br(),
             br(),
             br(),
-            div(class = "updated", "Last Update: 10/30/2020 by XGZ.")
+            div(class = "updated", "Last Update: 11/20/2020 by XGZ.")
           )
         ),
-        #### Set up the Prerequisites Page
+        #### Set up the Prerequisites Page ----
         tabItem(
           tabName = "Prerequisites",
           withMathJax(),
@@ -134,18 +135,26 @@ ui <- list(
           p("In order to get the most out of this app, please review the
             following:"),
           tags$ul(
-            tags$li("Variance Inflation Factor(VIF) is the quotient of the variance in a model with multiple terms by
-                    the variance of a model with one term alone. It quantifies the severity
-                    of multicollinearity in an ordinary least squares regression analysis. "),
+            tags$li("Variance Inflation Factor (VIF) is the quotient of the
+                    variance in a model with multiple terms by the variance of a
+                    model with one term alone. It quantifies the severity of
+                    multicollinearity in an ordinary least squares regression
+                    analysis."),
             tags$li("It provides an index that measures how much the variance
-                    (the square of the estimate's standard deviation) of an estimated regression coefficient
+                    (the square of the estimate's standard deviation) of an 
+                    estimated regression coefficient
                     is increased because of collinearity."),
-            tags$li("For example, the variance inflation factor for the estimated regression coefficient
-                    bj —denoted VIFj —is just the factor by which the variance of bj is inflated by the
-                    existence of correlation among the predictor variables in the model."),
-            tags$li("How do we interpret the variance inflation factors for a regression model?")
+            tags$li("For example, the variance inflation factor for the estimated 
+            regression coefficient
+                    bj —denoted VIFj —is just the factor by which the variance of 
+                    bj is inflated by the
+                    existence of correlation among the predictor variables in the 
+                    model."),
+            tags$li("How do we interpret the variance inflation factors for a 
+                    regression model?")
           ),
-          p("A VIF of 1 means that there is no correlation among the jth predictor and the remaining predictor variables,
+          p("A VIF of 1 means that there is no correlation among the jth predictor 
+          and the remaining predictor variables,
             and hence the variance of bj is not inflated at all."),
           box(
             title = strong("What's Collenarity Problem?"),
@@ -154,11 +163,16 @@ ui <- list(
             collapsed = TRUE,
             width = '100%',
             "Collenarity also named Multicollinearity exists
-            when two or more of the predictors in a regression model are moderately or highly correlated with one another.Unfortunately
-            when it exists, it can wreak havoc on our analysis and thereby limit the research conclusions we can draw. As following
-            The precision of the estimated regression coefficients decreases as more predictors are added to the model
-            The marginal contribution of any one predictor variable in reducing the error sum of squares depends on which other predictors are already in the model.
-            Hypothesis tests for βk = 0 may yield different conclusions depending on which predictors are in the model."
+            when two or more of the predictors in a regression model are moderately 
+            or highly correlated with one another.Unfortunately
+            when it exists, it can wreak havoc on our analysis and thereby limit 
+            the research conclusions we can draw. As following
+            The precision of the estimated regression coefficients decreases as 
+            more predictors are added to the model
+            The marginal contribution of any one predictor variable in reducing 
+            the error sum of squares depends on which other predictors are already 
+            in the model.Hypothesis tests for βk = 0 may yield different 
+            conclusions depending on which predictors are in the model."
           ),
           box(
             title = strong("How to determine the Collenarity Problem?"),
@@ -168,7 +182,7 @@ ui <- list(
             width = '100%',
             "The general rule of thumb is that VIFs exceeding 4 warrant further investigation,
             while VIFs exceeding 10 are signs of serious multicollinearity requiring correction."
-
+            
           )
         ),
         # Xigang, see my prior comment about removing comments not realted to your
@@ -182,10 +196,9 @@ ui <- list(
             VIF table and ANOVA table to see if there is Collinearity Problem"),
           p("It will also be part of Game question."),
           br(),
-          h3("Select a dataset"),
           selectInput(
             inputId = 'selectedData',
-            label = "",
+            label = "Select a data set",
             choices = list(
               "DC Bike Sharing Data" = "bikeSharing",
               "Sesame Street" = "sesameSt",
@@ -194,6 +207,7 @@ ui <- list(
             selected = 'bikeSharing'
           ),
           uiOutput("dataContext"), #In server create the output which explians the selected data set
+          br(),
           fluidRow(
             column(
               width = 4,
@@ -202,20 +216,22 @@ ui <- list(
                 inputId = "selectedVars",
                 label = "At least two variables",
                 choices = c("filler")
-              ),
+              )
+            ),
+            column(
+              width = 8,
               tabsetPanel(
                 type = "tabs",
                 ### Three output tab---
                 tabPanel(
-                  title = "Scatter plot Martix",
+                  title = "Scatter Plot Martix",
                   br(),
                   p(
                     "Try using scatter plot Martix to figure out which multiple variables
                   have strong correlation first."
                   ),
-                  h3("Plot"),
                   plotOutput("scatterplots"),
-                  bsPopover(
+                  bsPopover( ## What's this for?
                     id = "Scatter plot Martix",
                     title = "Martix Plot!",
                     content = "Can you figure out correlation?",
@@ -229,9 +245,8 @@ ui <- list(
                     "Becareful to those VIF scores larger than 5. Randomly select
                   at least two variables."
                   ),
-                  h3("VIF Result"),
-                  DT::dataTableOutput("viftable"),
-                  bsPopover(
+                  DT::dataTableOutput("vifTable"),
+                  bsPopover( ## What's this for?
                     id = "VIFtable",
                     title = "VIF Result!",
                     content = "What happens when VIF larger than 10?",
@@ -245,9 +260,8 @@ ui <- list(
                     "Try figure out which variables have potential Collinearity Problem,
                   based on ANOVA Table."
                   ),
-                  h3("ANOVA Table"),
-                  DT::dataTableOutput("AnovaTable"),
-                  bsPopover(
+                  DT::dataTableOutput("anovaTable"),
+                  bsPopover( ## What's this for?
                     id = "ANOVAtable",
                     title = "Table Result!",
                     content = "Have you figure out which variable have MultiCollinearity Problem?"
@@ -392,9 +406,12 @@ server <- function(input, output, session) {
         )
       } else if(input$selectedData == "sesameSt"){
         output$dataContext <- renderUI({
-          p("This dataset evaluated the impact of the first year of the Sesame Street television series.
-                   Sesame Street was concerned mainly with teaching preschool related skills to children.
-                   Both before and after viewing the series the chilren were tested on a variety of cognitive variables,
+          p("This dataset evaluated the impact of the first year of the Sesame 
+          Street television series.
+                   Sesame Street was concerned mainly with teaching preschool 
+                   related skills to children.
+                   Both before and after viewing the series the chilren were 
+                   tested on a variety of cognitive variables,
                    including knowledge of body parts, letters, numbers, etc.")
         })
         updateCheckboxGroupInput(
@@ -412,7 +429,8 @@ server <- function(input, output, session) {
       }
       else if(input$selectedData == "amesHousing"){
         output$dataContext <- renderUI({
-          p("Summon the data described by De Cock(2011) where 82 fields were recored for 2,930 properties
+          p("Summon the data described by De Cock(2011) where 82 fields were 
+          recored for 2,930 properties
 # in Ames IA.")
         })
         updateCheckboxGroupInput(
@@ -432,7 +450,7 @@ server <- function(input, output, session) {
         )
       }
     },
-    ignoreNULL = TRUE,
+    ignoreNULL = TRUE
     #ignoreInit = TRUE
   )
   #New sever code for three model tabPanel------
@@ -454,107 +472,166 @@ server <- function(input, output, session) {
       )
     }
   })
-
-  #server definition
-  observeEvent(input$selectedVars, {
-    ## Scatter plots----------
-    output$scatterplots <- renderPlot({
-      ggpairs(
-        data = dataSet,
-        columns = input$selectedVars,
-        upper = list(continuous = "points"),
-        lower = list(continuous = "blank"),
-        diag = list(continuous = "blankDiag")
-      )
-      ## Fill in appropriate code here for a scatterplot matrix
-      # You'll need to call both dataSet() and input$selectedVars
-    })
-    ## Fit the Model------#y not informative "ifelse
-    responseVar <- eventReactive(
-      eventExpr = input$selectedData,
-      valueExpr = {
-        if(input$selectedData == "bikeSharing"){
-          "count"
-        } else if (input$selectedData == "sesameSt") {
-          "improvenumb"
-        } else if (input$selectedData == "amesHousing") {
-          "price"
-        } else {
-          "Y"
-        }
+  
+  ## Set the response variable ----
+  responseVar <- eventReactive(
+    eventExpr = input$selectedData,
+    valueExpr = {
+      if(input$selectedData == "bikeSharing"){
+        "count"
+      } else if (input$selectedData == "sesameSt") {
+        "improvenumb"
+      } else if (input$selectedData == "amesHousing") {
+        "SalePrice"
+      } else {
+        "Y"
       }
-    )
-    model <- lm(
-      formula = as.formula(
-        paste(
-          "responseVar ~ ",
-          paste(input$selectedVars, collapse = "+"))),
-      data = dataSet() #this is how you would call the data regardless
-    )
-    ## VIF table
-    output$vifTable <- DT::renderDataTable(
-      expr = data.frame(VIF = round(vif(dataSet()), digits = 4)),
-      options = list(
-        responsive = TRUE,
-        scrollx = FALSE,
-        ordering = FALSE,
-        paging = FALSE,
-        lengthChange = FALSE,
-        pageLeength = 4,
-        searching = FALSE,
-        info = FALSE
+    },
+    ignoreNULL = TRUE,
+    ignoreInit = FALSE
+  )
+  
+  ## Fit the Model ----
+  #y not informative "ifelse
+  model <- eventReactive(
+    eventExpr = input$selectedVars,
+    valueExpr = {
+      validate(
+        need(
+          expr = length(input$selectedVars) >= 2,
+          message = "Please select at least two predictors."
+        )
       )
-    )
-    ## Anova table
-    # This will be similar to the VIF table but you'll have to adjust to
-    # the appropriate output. You might want to look at summary(model) as a
-    # starting point
-    output$anova <- DT::renderDataTable(
-      expr = data.frame(ANOVA = (summary(dataSet()))),
-      options = list(
-        responsive = TRUE,
-        scrollx = FALSE,
-        ordering = FALSE,
-        paging = FALSE,
-        lengthChange = FALSE,
-        searching = FALSE,
-        info = FALSE
+      lm(
+        formula = as.formula(
+          paste(
+            responseVar(),
+            " ~ ",
+            paste(input$selectedVars, collapse = "+")
+          )
+        ),
+        data = dataSet() #this is how you would call the data regardless
       )
-    )
-  })
+    },
+    ignoreNULL = TRUE,
+    ignoreInit = TRUE
+  )
+  ## Rendering the three Exploration results ----
+  observeEvent(
+    eventExpr = input$selectedVars,
+    handlerExpr = {
+      ### Scatter plots----------
+      output$scatterplots <- renderPlot({
+        validate(
+          need(
+            expr = length(input$selectedVars) >= 2,
+            message = "Please select at least two predictors."
+          )
+        )
+        ggpairs(
+          data = dataSet(),
+          columns = input$selectedVars,
+          upper = list(continuous = "points"),
+          lower = list(continuous = "blank"),
+          diag = list(continuous = "blankDiag")
+        )
+      })
+      print(summary(model()))
+      
+      ## VIF table ----
+      output$vifTable <- DT::renderDataTable(
+        expr = {
+          validate(
+            need(
+              expr = length(input$selectedVars) >= 2,
+              message = "Please select at least two predictors."
+            )
+          )
+          data.frame(VIF = round(vif(model()), digits = 4))
+        },
+        options = list(
+          responsive = TRUE,
+          scrollx = FALSE,
+          ordering = FALSE,
+          paging = FALSE,
+          lengthChange = FALSE,
+          pageLeength = 4,
+          searching = FALSE,
+          info = FALSE
+        )
+      )
+      ## Anova table ----
+      # Prepare the data frame for ANOVA ---
+      model <- aov(
+        formula = as.formula(
+          paste(
+            responseVar(),
+            " ~ ",
+            paste(input$selectedVars, collapse = "+")
+          )
+        ),
+        data = dataSet() 
+      )
+      anovamodel <- anova(model)
+      output$anovaTable <- DT::renderDataTable(
+        expr = {
+          validate(
+            need(
+              expr = length(input$selectedVars) >= 2,
+              message = "Please select at least two predictors."
+            )
+          )
+          as.data.frame((anovamodel()))
+        },
+        options = list(
+          responsive = TRUE,
+          scrollx = FALSE,
+          ordering = FALSE,
+          paging = FALSE,
+          lengthChange = FALSE,
+          searching = FALSE,
+          info = FALSE
+        )
+      )
+    },
+    ignoreNULL = FALSE,
+    ignoreInit = FALSE
+  )
+  
+  ## Tic-Tac-Toe Section ----
   # Helper Functions
   .tileCoordinates <- function(tile = NULL, index = NULL) {
     row <- -1
     col <- -1
-
+    
     # if: button tile is given, derive from id
     # else: derive from index
     if (!is.null(tile)) {
       # grid-[row]-[col]
       tile <- strsplit(tile, "-")[[1]]
       tile <- tile[-1] # remove oxo
-
+      
       row <- strtoi(tile[1])
       col <- strtoi(tile[2])
     } else {
       row <- (index - 1) %/% GRID_SIZE + 1
       col <- index - (GRID_SIZE * (row - 1))
     }
-
+    
     coordinates <- list("row" = row,
                         "col" = col)
-
+    
     return(coordinates)
   }
-
+  
   .tileIndex <- function(tile) {
     coords <- .tileCoordinates(tile)
-
+    
     index = GRID_SIZE * (coords$row - 1) + coords$col
-
+    
     return(index)
   }
-
+  
   .btnReset <- function(index) {
     coords <- .tileCoordinates(index = index)
     id <- paste0("grid-", coords$row, "-", coords$col)
@@ -565,24 +642,24 @@ server <- function(input, output, session) {
       disabled = FALSE
     )
   }
-
+  
   .score <- function(score, tile, value) {
     i <- .tileCoordinates(tile)
-
+    
     score[i$row, i$col] <- value
-
+    
     return(score)
   }
-
+  
   .gameCheck <- function(mat) {
     rows <- rowSums(mat)
     cols <- colSums(mat)
-
+    
     if (GRID_SIZE > 1) {
       mainD <- sum(diag(mat))
       rotated <- apply(t(mat), 2, rev)
       offD <- sum(diag(rotated))
-
+      
       if (GRID_SIZE %in% rows ||
           GRID_SIZE %in% cols ||
           mainD == GRID_SIZE || offD == GRID_SIZE) {
@@ -600,18 +677,18 @@ server <- function(input, output, session) {
       ifelse(rows == 1 && rows != 0, return("win"), return("lose"))
     }
   }
-
+  
   .boardBtn <- function(tile) {
     index <- .tileIndex(tile)
     activeQuestion <<- gameSet[index, "id"]
-
+    
     output$question <- renderUI({
       withMathJax()
       return(gameSet[index, "question"])
     })
-
+    
     output$answer <- .ansFunc(index, gameSet)
-
+    
     if (gameSet[index, "extraOutput"] != "") {
       output$extraOutput <- renderText({
         gameSet[index, "extraOutput"]
@@ -619,7 +696,7 @@ server <- function(input, output, session) {
     } else {
       output$extraOutput <- NULL
     }
-
+    
     #Retrigger MathJax processing
     output$trigger1 <- renderUI({
       withMathJax()
@@ -627,13 +704,13 @@ server <- function(input, output, session) {
     output$trigger2 <- renderUI({
       withMathJax()
     })
-
+    
     #Enable Submit Button
     updateButton(session = session,
                  inputId = "submit",
                  disabled = FALSE)
   }
-
+  
   .ansFunc <- function(index, df) {
     if (df[index, "format"] == "numeric") {
       renderUI({
@@ -689,13 +766,13 @@ server <- function(input, output, session) {
       })
     }
   }
-
+  
   .gameReset <- function() {
     lapply(1:TILE_COUNT, .btnReset)
     qSelected <<-
       sample(seq_len(nrow(questionBank)), size = TILE_COUNT, replace = FALSE)
     gameSet <<- questionBank[qSelected,]
-
+    
     output$question <-
       renderUI({
         return("Click a button on the game board to get started on your new game.")
@@ -714,19 +791,19 @@ server <- function(input, output, session) {
       )
     gameProgress <- FALSE
     activeBtn <- NA
-
+    
     updateButton(session = session,
                  inputId = "submit",
                  disabled = TRUE)
   }
-
+  
   .generateStatement <- function(session, verb = NA, object = NA, description = NA) {
     if(is.na(object)){
       object <- paste0("#shiny-tab-", session$input$tabs)
     } else {
       object <- paste0("#", object)
     }
-
+    
     statement <- rlocker::createStatement(list(
       verb =  verb,
       object = list(
@@ -738,7 +815,7 @@ server <- function(input, output, session) {
     print(statement)
     return(rlocker::store(session, statement))
   }
-
+  
   .generateAnsweredStatement <- function(session, verb = NA, object = NA, description = NA, interactionType = NA, response = NA, success = NA, completion = FALSE) {
     statement <- rlocker::createStatement(list(
       verb = verb,
@@ -753,23 +830,24 @@ server <- function(input, output, session) {
         response = response,
         completion = completion
         # extensions = list(
-        #   ref = "https://shinyapps.science.psu.edu/scoreMatrix", value = paste(as.data.frame(scoreMatrix), collapse = ", ")
+        #   ref = "https://shinyapps.science.psu.edu/scoreMatrix", 
+        #value = paste(as.data.frame(scoreMatrix), collapse = ", ")
         #   )
       )
     )
     )
-
+    
     # print(statement)
     return(rlocker::store(session, statement))
   }
-
+  
   # Define navigation buttons
   observeEvent(input$go1, {
     updateTabItems(session,
                    inputId = "tabs",
                    selected = "Explore")
   })
-
+  
   # Read in data and generate the first subset
   questionBank <-
     read.csv("questionBank.csv",
@@ -778,22 +856,23 @@ server <- function(input, output, session) {
   qSelected <-
     sample(seq_len(nrow(questionBank)), size = TILE_COUNT, replace = FALSE)
   gameSet <- questionBank[qSelected,]
-
+  
   # Program the Reset Button
   observeEvent(input$reset, {
-    .generateStatement(session, object = "reset", verb = "interacted", description = "game board has been reset.")
+    .generateStatement(session, object = "reset", verb = "interacted", 
+                       description = "game board has been reset.")
     .gameReset()
   })
-
+  
   # Render game Board / Attach Observers
   output$gameBoard <- renderUI({
     board <- list()
     index <- 1
-
+    
     sapply(1:GRID_SIZE, function(row) {
       sapply(1:GRID_SIZE, function(column) {
         id <- paste0("grid-", row, "-", column)
-
+        
         board[[index]] <<- tags$li(
           actionButton(
             inputId = paste0("grid-", row, "-", column),
@@ -804,37 +883,40 @@ server <- function(input, output, session) {
           ),
           class = "grid-tile"
         )
-
+        
         observeEvent(session$input[[id]], {
           activeBtn <<- id
           .boardBtn(id)
-          .generateStatement(session, object = activeBtn, verb = "interacted", description = paste0("Tile ", activeBtn, " selected. Rendering question: ", activeQuestion, "."))
+          .generateStatement(session, object = activeBtn, verb = "interacted", 
+                             description = paste0("Tile ", activeBtn, 
+                                                  " selected. Rendering question: ", 
+                                                  activeQuestion, "."))
         })
-
+        
         index <<- index + 1
       })
     })
-
+    
     tags$ol(board, class = paste(
       "grid-board",
       "grid-fill",
       paste0("grid-", GRID_SIZE, "x", GRID_SIZE)
     ))
   })
-
+  
   # Program Submit Button
   observeEvent(input$submit, {
     index <- .tileIndex(activeBtn)
     answer <- ""
-
+    
     if (gameSet[index, "format"] == "numeric") {
       answer <- gameSet[index, "answer"]
     } else {
       answer <- gameSet[index, gameSet[index, "answer"]]
     }
-
+    
     success <- input$ans == answer
-
+    
     if (success) {
       updateButton(
         session = session,
@@ -852,12 +934,13 @@ server <- function(input, output, session) {
       )
       scoreMatrix <<- .score(scoreMatrix, activeBtn,-1)
     }
-
+    
     # Check for game over states
     .gameState <- .gameCheck(scoreMatrix)
     completion <- ifelse(.gameState == "continue", FALSE, TRUE)
-    interactionType <- ifelse(gameSet[index,]$format == "numeric", "numeric", "choice")
-
+    interactionType <- ifelse(gameSet[index,]$format == "numeric", "numeric", 
+                              "choice")
+    
     .generateAnsweredStatement(
       session,
       object = activeBtn,
@@ -868,9 +951,10 @@ server <- function(input, output, session) {
       success = success,
       completion = completion
     )
-
+    
     if (.gameState == "win") {
-      .generateStatement(session, object = "game", verb = "completed", description = "Player has won the game.")
+      .generateStatement(session, object = "game", verb = "completed", 
+                         description = "Player has won the game.")
       confirmSweetAlert(
         session = session,
         inputId = "endgame",
@@ -879,7 +963,8 @@ server <- function(input, output, session) {
         btn_labels = "Start Over"
       )
     } else if (.gameState == "lose") {
-      .generateStatement(session, object = "game", verb = "completed", description = "Player has lost the game.")
+      .generateStatement(session, object = "game", verb = "completed", 
+                         description = "Player has lost the game.")
       confirmSweetAlert(
         session = session,
         inputId = "endgame",
@@ -888,7 +973,8 @@ server <- function(input, output, session) {
         btn_labels = "Start Over"
       )
     } else if (.gameState == "draw") {
-      .generateStatement(session, object = "game", verb = "completed", description = "game has ended in a draw.")
+      .generateStatement(session, object = "game", verb = "completed", 
+                         description = "game has ended in a draw.")
       confirmSweetAlert(
         session = session,
         inputId = "endgame",
@@ -901,7 +987,7 @@ server <- function(input, output, session) {
                  inputId = "submit",
                  disabled = TRUE)
   })
-
+  
   observeEvent(input$tabs, {
     if (input$tabs == "game") {
       if (!gameProgress) {
@@ -916,14 +1002,16 @@ server <- function(input, output, session) {
         gameProgress <<- TRUE
       }
     }
-    .generateStatement(session, verb = "experienced", description = paste0("Navigated to ", input$tabs, " tab."))
+    .generateStatement(session, verb = "experienced", 
+                       description = paste0("Navigated to ", input$tabs, " tab."))
   }, ignoreInit = TRUE)
-
+  
   observeEvent(input$endgame, {
-    .generateStatement(session, object = "endgame", verb = "interacted", description = paste("game has been reset."))
+    .generateStatement(session, object = "endgame", verb = "interacted", 
+                       description = paste("game has been reset."))
     .gameReset()
   })
-
+  
   observeEvent(input$shinyalert, {
     if (input$shinyalert == TRUE) {
       player <<- "X"
@@ -933,9 +1021,10 @@ server <- function(input, output, session) {
       player <<- "O"
       opponent <<- "X"
     }
-
-    .generateStatement(session, object = "shinyalert", verb = "interacted", description = paste0("User has selected player: ", player))
-
+    
+    .generateStatement(session, object = "shinyalert", verb = "interacted", 
+                       description = paste0("User has selected player: ", player))
+    
     output$player <- renderUI({
       return(paste0("You are playing as ", player, "."))
     })
@@ -944,6 +1033,5 @@ server <- function(input, output, session) {
 # End of code-------------------------------------------------
 
 
-# Create Shiny App using BOAST App template
+# Boast app call ----
 boastApp(ui = ui, server = server)
-# shinyApp(ui = ui, server = server) # For testing purposes only
