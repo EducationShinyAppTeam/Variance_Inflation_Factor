@@ -13,17 +13,6 @@ library(GGally)
 GRID_SIZE <- 3
 TILE_COUNT <- GRID_SIZE ^ 2
 
-# App Meta Data----------------------------------------------------------------
-APP_TITLE  <<- "Collinearity"
-APP_DESCP  <<- paste(
-  "This app this for letting students know Variance Inflation Factor scores",
-  "using in Regression and also collinearity problem."
-)
-# End App Meta Data------------------------------------------------------------
-
-# Xigang, remove any comments that don't pertain to your app, including the
-# comments I put into the sample app file you worked from.
-
 #Load Data, and define Global Functions and Variables----
 bikeSharing <- read.csv(
   file = "DCbikeSharing.csv",
@@ -45,13 +34,11 @@ na.omit(sesame)
 na.omit(AmesHousingClean)
 # Define UI for App
 ui <- list(
-  # Xigang, you don't need this V (it's only needed in the ui.r + server.r setup)
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css",
               href = "https://educationshinyappteam.github.io/Style_Guide/theme/boast.css")
-    #href = "boast.css") ## This is for Neil's testing purposes
+    #href = "boast.css")
   ),
-  # Xigang, you don't need this ^
   ## Create the app page
   dashboardPage(
     skin = "black",
@@ -128,10 +115,6 @@ ui <- list(
           tabName = "Prerequisites",
           withMathJax(),
           h2("Prerequisites"),
-          # Xigang, you mentioned that you got the following information from
-          # a website? Which one? I didn't notice any in the References. You
-          # can't just use material you found online without proper attribution.
-          # Failure to give credit is a violation of Academic Integrity.
           p("In order to get the most out of this app, please review the
             following:"),
           tags$ul(
@@ -185,8 +168,6 @@ ui <- list(
             
           )
         ),
-        # Xigang, see my prior comment about removing comments not realted to your
-        # app
         #### Set up an Explore Page ----
         tabItem(
           tabName = "Explore",
@@ -231,12 +212,6 @@ ui <- list(
                   have strong correlation first."
                   ),
                   plotOutput("scatterplots"),
-                  bsPopover( ## What's this for?
-                    id = "Scatter plot Martix",
-                    title = "Martix Plot!",
-                    content = "Can you figure out correlation?",
-                    placement = "top"
-                  )
                 ),
                 tabPanel(
                   title = "VIF Table",
@@ -246,12 +221,6 @@ ui <- list(
                   at least two variables."
                   ),
                   DT::dataTableOutput("vifTable"),
-                  bsPopover( ## What's this for?
-                    id = "VIFtable",
-                    title = "VIF Result!",
-                    content = "What happens when VIF larger than 10?",
-                    placement = "top"
-                  )
                 ),
                 tabPanel(
                   title = "ANOVA Table",
@@ -261,11 +230,7 @@ ui <- list(
                   based on ANOVA Table."
                   ),
                   DT::dataTableOutput("anovaTable"),
-                  bsPopover( ## What's this for?
-                    id = "ANOVAtable",
-                    title = "Table Result!",
-                    content = "Have you figure out which variable have MultiCollinearity Problem?"
-                  )
+                  DT::dataTableOutput("coefficients"),
                 )
               )
             )
@@ -521,8 +486,7 @@ server <- function(input, output, session) {
     eventExpr = input$selectedVars,
     handlerExpr = {
       ### Scatter plots----------
-      output$scatterplots <- renderPlot(
-        {
+      output$scatterplots <- renderCachedPlot({
         validate(
           need(
             expr = length(input$selectedVars) >= 2,
@@ -542,7 +506,8 @@ server <- function(input, output, session) {
           lower = list(continuous = "blank"),
           diag = list(continuous = "blankDiag")
         )
-      }
+      },
+      cacheKeyExpr = {list(input$selectedData, input$selectedVars)}
       )
       
       ## VIF table ----
@@ -568,19 +533,23 @@ server <- function(input, output, session) {
         )
       )
       ## Anova table ----
-      # Prepare the data frame for ANOVA
-      model <- aov(
-        formula = as.formula(
-          paste(
-            responseVar(),
-            " ~ ",
-            paste(input$selectedVars, collapse = "+")
-          )
-        ),
-        data = dataSet()
+      anovaOut <- anova(model())
+      rowNames <- row.names(anovaOut)
+      anovaOut <- apply(
+        X = anovaOut,
+        MARGIN = 2,
+        FUN = "prettyNum",
+        big.mark = ",",
+        digits = 3
       )
-      anovamodel <- anova(model)
-      output$anovaTable <- DT::renderDataTable(
+      anovaOut <- as.data.frame(anovaOut) %>%
+        dplyr::mutate(
+          `Pr(>F)` = ifelse (`Pr(>F)` < 0.0001, "< 0.0001", `Pr(>F)`)
+         ) %>%
+            dplyr::na_if("NA")
+          row.names(anovaOut) <- rowNames
+      
+          output$anovaTable <- DT::renderDataTable(
         expr = {
           validate(
             need(
@@ -588,8 +557,21 @@ server <- function(input, output, session) {
               message = "Please select at least two predictors."
             )
           )
-          as.data.frame((anovamodel()))
+          anovaOut
         },
+        options = list(
+          responsive = TRUE,
+          scrollx = FALSE,
+          ordering = FALSE,
+          paging = FALSE,
+          lengthChange = FALSE,
+          searching = FALSE,
+          info = FALSE
+        )
+      )
+      ## coefficients ----
+      output$coefficients <- DT::renderDataTable(
+        expr = data.frame(round(summary(model())$coefficients, digits = 4)),
         options = list(
           responsive = TRUE,
           scrollx = FALSE,
