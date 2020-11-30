@@ -521,22 +521,29 @@ server <- function(input, output, session) {
     eventExpr = input$selectedVars,
     handlerExpr = {
       ### Scatter plots----------
-      output$scatterplots <- renderPlot({
+      output$scatterplots <- renderPlot(
+        {
         validate(
           need(
             expr = length(input$selectedVars) >= 2,
             message = "Please select at least two predictors."
           )
         )
+        ggplot2::theme_set(ggplot2::theme_bw())
+        lowerFn <- function(data = dataSet(), mapping, method = "lm"){
+          p <- ggplot(data = dataSet(), mapping = mapping) +
+            geom_point(colour = "black") +
+            geom_smooth(method = method, color = "red")
+        }
         ggpairs(
           data = dataSet(),
           columns = input$selectedVars,
-          upper = list(continuous = "points"),
+          upper = list(continuous = wrap(lowerFn, method = "lm")),
           lower = list(continuous = "blank"),
           diag = list(continuous = "blankDiag")
         )
-      })
-      print(summary(model()))
+      }
+      )
       
       ## VIF table ----
       output$vifTable <- DT::renderDataTable(
@@ -561,7 +568,7 @@ server <- function(input, output, session) {
         )
       )
       ## Anova table ----
-      # Prepare the data frame for ANOVA ---
+      # Prepare the data frame for ANOVA
       model <- aov(
         formula = as.formula(
           paste(
@@ -570,7 +577,7 @@ server <- function(input, output, session) {
             paste(input$selectedVars, collapse = "+")
           )
         ),
-        data = dataSet() 
+        data = dataSet()
       )
       anovamodel <- anova(model)
       output$anovaTable <- DT::renderDataTable(
