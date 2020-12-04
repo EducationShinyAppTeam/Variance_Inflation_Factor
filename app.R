@@ -163,7 +163,7 @@ ui <- list(
             collapsible = TRUE,
             collapsed = TRUE,
             width = '100%',
-            "The general rule of thumb is that VIFs exceeding 4 warrant further investigation,
+            "The general rule of thumb is that VIFs exceeding 5 warrant further investigation,
             while VIFs exceeding 10 are signs of serious multicollinearity requiring correction."
             
           )
