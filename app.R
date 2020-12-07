@@ -104,12 +104,12 @@ ui <- list(
         tabItem(
           tabName = "Overview",
           withMathJax(),
-          h1("Variance Infation Factor (VIF) & Collinearity"),
+          h1("Variance Inflation Factor (VIF) & Collinearity"),
           p("In regression, the collinearity problem is a common and sometimes
             serious problem analysts face. One way to detect collinearity
             of predictors is to use the Varaiance Inflation Factor."),
           h2("Instructions"),
-          p("Explore the Variance Infaltion Factor and how to detect collinearity
+          p("Explore the Variance Inflation Factor and how to detect collinearity
             amongst multiple predictors."),
           tags$ol(
             tags$li("Review any prerequiste ideas using the Prerequistes tab."),
