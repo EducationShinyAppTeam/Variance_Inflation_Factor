@@ -107,7 +107,7 @@ ui <- list(
           h1("Variance Inflation Factor (VIF) & Collinearity"),
           p("In regression, the collinearity problem is a common and sometimes
             serious problem analysts face. One way to detect collinearity
-            of predictors is to use the Varaiance Inflation Factor."),
+            of predictors is to use the Variance Inflation Factor."),
           h2("Instructions"),
           p("Explore the Variance Inflation Factor and how to detect collinearity
             amongst multiple predictors."),
