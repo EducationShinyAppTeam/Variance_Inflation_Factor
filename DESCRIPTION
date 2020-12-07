@@ -1,0 +1,24 @@
+Title: Variance Inflation Factor & Collinearity
+ShortName: Collinearity
+Date: 2020-12-08
+Lifecycle: experimental
+Authors@R: c(
+    person(given = "Xigang", family = "Zhang", email = "xxz5346@psu.edu", role = c("aut","cre")),
+    person(given = "Neil", family = "Hatfield", email = "njh5464@psu.edu", role = c("aut")),
+    person(given = "Dennis", family = "Pearl", email = "dkp13@psu.edu", role = c("ctb"))
+  )
+Chapter: Chapter 6
+Description: This app explores the Variance Infalation Factor (VIF), the issues 
+    of collinearity, and how to determine whether there is a problem.
+LearningObjectives: c(
+    "The student will learn to understand concept how to detect collinearity 
+     in explore page .",
+    "The student will learn to understand concept Variance Inflation factor 
+     as description in both prerequisite page and explore page."
+  )
+DisplayMode: Normal
+URL: https://psu-eberly.shinyapps.io/Variance_Inflation_Factor
+BugReports: https://github.com/EducationShinyAppTeam/Variance_Inflation_Factor/issues
+License: CC-BY-NC-SA-4.0
+Tags: real data
+Type: Shiny
