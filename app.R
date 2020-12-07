@@ -5,8 +5,6 @@ library(shinydashboard)
 library(shinyBS)
 library(boastUtils)
 library(DT)
-library(shinyalert)
-library(shinyWidgets)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
@@ -37,9 +35,35 @@ amesHousing <- amesHousing %>%
   tidyr::drop_na() %>%
   dplyr::slice_sample(prop = 0.5)
 
-#TicTacToe--Keep for future development
-#GRID_SIZE <- 3
-#TILE_COUNT <- GRID_SIZE ^ 2
+prettyVarNames <- function(vars){
+  temp1 <- dplyr::recode(
+    .x = vars,
+    "temp" = "Temperature",
+    "windspeed" = "Windspeed",
+    "age" = "Age",
+    "humidity" = "Humidity",
+    "atemp" = "Air Temp",
+    "prenumb" = "Prior Num. Skill",
+    "encour" = "Encouraged",
+    "viewcat" = "Viewing Freq.",
+    "site" = "View Site",
+    "preform" = "Prior Form Skill",
+    "Lot.Frontage" = "Frontage",
+    "Lot.Area" = "Area",
+    "Year.Built" = "Year Built",
+    "Garage.Area" = "Garg. Area",
+    "Gr.Liv.Area" = "Grd Living Area",
+    "Total.Bsmt.SF" = "Tot. Bsmt Area",
+    "Garage.Yr.Blt" = "Garg. Year",
+    "X1st.Flr.SF" = "1st Flr. Area",
+    "X2nd.Flr.SF" = "2nd Flr. Area"
+    )
+  return(temp1)
+}
+
+# TicTacToe--Keep for future development
+# GRID_SIZE <- 3
+# TILE_COUNT <- GRID_SIZE ^ 2
 
 # Define UI for App ----
 ui <- list(
@@ -81,12 +105,12 @@ ui <- list(
           tabName = "Overview",
           withMathJax(),
           h1("Variance Infation Factor (VIF) & Collinearity"),
-          p("In regression, collinearity problem is a common and sometimes
-            serious problem students may faced. So how to decete collinearity
-            problem? Try using Varaiance Inflation Factor."),
+          p("In regression, the collinearity problem is a common and sometimes
+            serious problem analysts face. One way to detect collinearity
+            of predictors is to use the Varaiance Inflation Factor."),
           h2("Instructions"),
-          p("You will directly learn what's Variance Infaltion Factor and what's
-          causing Collinearity Problem."),
+          p("Explore the Variance Infaltion Factor and how to detect collinearity
+            amongst multiple predictors."),
           tags$ol(
             tags$li("Review any prerequiste ideas using the Prerequistes tab."),
             tags$li("Explore the Exploration Tab."),
@@ -124,7 +148,7 @@ ui <- list(
           p("In order to get the most out of this app, please review the
             following."),
           box(
-            title = "What's Collenarity Problem?",
+            title = "What is Collenarity?",
             collapsible = TRUE,
             collapsed = FALSE,
             width = '100%',
@@ -159,9 +183,12 @@ ui <- list(
               "For example, the VIF for the estimated regression coefficient
               \\(b_j\\), denoted \\(VIF_j\\), is the factor by which the variance
               of \\(b_j\\) is inflated by the existence of correlation among the
-              predictor variables in the model. A VIF of 1 means that there is
-              no correlation between predictor \\(j\\) and the other predictors
-              in the model. Thus, the variance of \\(b_j\\) is not inflated."
+              predictor variables in the model. Thus, a \\(VIF_{x1}=8.3\\)
+              indicates that variance of \\(b_{x1}\\) is 8.3 times larger in the
+              full model than when we only have the \\(x1\\) predictor. A VIF of
+              1 means that there is no correlation between predictor \\(j\\) and
+              the other predictors in the model. Thus, the variance of \\(b_j\\)
+              is not inflated."
             )
           ),
           box(
@@ -170,7 +197,7 @@ ui <- list(
             collapsed = TRUE,
             width = '100%',
             p(
-              "A general rule of thumb is that VIFs greater than 4 indicate
+              "A general rule of thumb is that VIFs greater than 5 indicate
               additional investigation, while VIFs greater than 10 point to
               serious multicollinearity requiring correction."
             )
@@ -181,8 +208,10 @@ ui <- list(
           tabName = "Explore",
           withMathJax(),
           h2("Explore the VIFs & Collinearity"),
-          p("You can choose different dataset and explore correlation martix plot,
-            VIF table and ANOVA table to see if there is Collinearity Problem"),
+          p("You can choose different datasets, select various predictors, and
+            then explore several tools for looking at collinearity including a
+            scatter plot matrix of predictors, the VIF table, and model summeries."
+          ),
           ## Removing this line for now.
           # p("It will also be part of Game question."),
           br(),
@@ -201,10 +230,10 @@ ui <- list(
           fluidRow(
             column(
               width = 4,
-              h3("Select your predictors"),
+              h3("Available Predictors"),
               checkboxGroupInput(
                 inputId = "selectedVars",
-                label = "At least two variables",
+                label = "Select at least two of the following",
                 choices = c("filler")
               )
             ),
@@ -301,14 +330,6 @@ ui <- list(
           tabName = "References",
           withMathJax(),
           h2("References"),
-          # Xigang, you need to include all of the data sources as well as
-          # where you got any content
-          p(
-            class = "hangingindent",
-            "Attali, D. and Edwards, T. (2018). shinyalert: Easily create pretty
-            popup messages (modals) in 'Shiny'. (v1.0). [R package]. Available
-            from https://CRAN.R-project.org/package=shinyalert"
-          ),
           p(
             class = "hangingindent",
             "Bailey, E. (2015). shinyBS: Twitter bootstrap components for shiny.
@@ -316,8 +337,8 @@ ui <- list(
           ),
           p(
             class = "hangingindent",
-            "Carey, R. (2019). boastUtils: BOAST Utilities. (v0.1.0). [R Package].
-            Available from https://github.com/EducationShinyAppTeam/boastUtils"
+            "Carey, R. and Hatfield, N. (2020). boastUtils: BOAST Utilities.
+            (v0.1.10). [R Package]. Available from https://github.com/EducationShinyAppTeam/boastUtils"
           ),
           p(
             class = "hangingindent",
@@ -327,51 +348,49 @@ ui <- list(
           ),
           p(
             class = "hangingindent",
-            "John Fox and Sanford Weisberg (2019). An {R} Companion to Applied 
+            "Chang, W., Cheng, J., Allaire, J., Xie, Y., and McPherson, J. (2020).
+            shiny: Web application framework for R. (v1.5.0) [R Package]. Available
+            from https://CRAN.R-project.org/package=shiny"
+          ),
+          p(
+            class = "hangingindent",
+            "Fox, J. and Weisberg, S. (2019). An {R} Companion to Applied
             Regression, Third Edition. Thousand Oaks CA: Sage. URL:
             https://socialsciences.mcmaster.ca/jfox/Books/Companion/"
           ),
           p(
             class = "hangingindent",
-            "Yihui Xie, Joe Cheng and Xianying Tan (2020). DT: A Wrapper of the
-            JavaScript Library 'DataTables'. R package version 0.14. 
-            https://CRAN.R-project.org/package=DT"
+            "Schloerke, B., Cook, D., Larmarange, J., Briatte, F., Marbach, M.,
+            Thoen, E., Elberg, A., and Crowley, J. (2020).
+            GGally: Extension to 'ggplot2'. Rpackage version 2.0.0.
+            https://CRAN.R-project.org/package=GGall"
           ),
           p(
             class = "hangingindent",
-            "Hadley Wickham, Romain François, Lionel Henry and Kirill Müller 
+            "Wickham, H. ggplot2: Elegant Graphics for Data Analysis.
+            Springer-Verlag New York, 2016. Available at https://ggplot2.tidyverse.org"
+          ),
+          p(
+            class = "hangingindent",
+            "Wickham, H. (2020). tidyr: Tidy Messy Data.
+            R package version 1.1.2. https://CRAN.R-project.org/package=tidyr"
+          ),
+          p(
+            class = "hangingindent",
+            "Wickham, H., François, R., Henry, L., and Müller, K.
             (2020). dplyr: A Grammar of Data Manipulation. R package version 1.0.2.
              https://CRAN.R-project.org/package=dplyr"
           ),
           p(
             class = "hangingindent",
-            "Hadley Wickham and Lionel Henry (2020). tidyr: Tidy Messy Data. 
-            R package version 1.1.0. https://CRAN.R-project.org/package=tidyr"
+            "Xie, Y., Cheng, J., and Tan, X. (2020). DT: A Wrapper of the
+            JavaScript Library 'DataTables'. R package version 0.16.
+            https://CRAN.R-project.org/package=DT"
           ),
-          p(
-            class = "hangingindent",
-            "Barret Schloerke, Di Cook, Joseph Larmarange, Francois Briatte, 
-            Moritz Marbach, Edwin Thoen, Amos Elberg and Jason Crowley (2020). 
-            GGally: Extension to 'ggplot2'. Rpackage version 2.0.0. 
-            https://CRAN.R-project.org/package=GGall"
-          ),
-          p(
-            class = "hangingindent",
-            "H. Wickham. ggplot2: Elegant Graphics for Data Analysis. 
-            Springer-Verlag New York, 2016."
-          ),
-          p(
-            class = "hangingindent",
-            "Chang, W., Cheng, J., Allaire, J., Xie, Y., and McPherson, J. (2019).
-            shiny: Web application framework for R. (v1.4.0) [R Package]. Available
-            from https://CRAN.R-project.org/package=shiny"
-          ),
-          p(
-            class = "hangingindent",
-            "Perrier, V., Meyer, F., Granjon, D. (2019). shinyWidgets: Custom
-            inputs widgets for shiny. (v0.5.0) [R Package]. Available from
-            https://CRAN.R-project.org/package=shinyWidgets"
-          )
+          br(),
+          br(),
+          br(),
+          boastUtils::copyrightInfo()
         )
       )
     )
@@ -388,7 +407,7 @@ server <- function(input, output, session) {
       selected = "Explore"
     )
   })
-  
+
   ## Game code is disabled for now
   # ## Game Variables ----
   # activeBtn <- NA
@@ -402,7 +421,7 @@ server <- function(input, output, session) {
   #     ncol = GRID_SIZE
   #   )
   # gameProgress <- FALSE
-  
+
   ## Dataset Control----
   observeEvent(
     eventExpr = input$selectedData,
@@ -426,7 +445,7 @@ server <- function(input, output, session) {
                            properties located in Ames, IA.")
         )
       })
-      
+
       ### Variable Selections
       updateCheckboxGroupInput(
         session = session,
@@ -440,12 +459,12 @@ server <- function(input, output, session) {
             "Air Temperature" = "atemp"
           ),
           "sesameSt" = list(
-            "Pre-exam number skill scores" = "prenumb",
+            "Prior Number Skill Score" = "prenumb",
             "Age" = "age",
-            "Encourage see Sesame" = "encour",
-            "View Frequency" = "viewcat",
-            "Place watching Sesame" = "site",
-            "Pre-exam form skill scores" = "preform"
+            "Encouraged to Watch" = "encour",
+            "Viewing Frequency" = "viewcat",
+            "Viewing Site" = "site",
+            "Prior Form Skill Score" = "preform"
           ),
           "amesHousing" = list(
             "Lot Frontage" = "Lot.Frontage",
@@ -463,7 +482,7 @@ server <- function(input, output, session) {
     },
     ignoreNULL = TRUE
   )
-  
+
   ## Set the data set ----
   dataSet <- reactiveVal()
   observeEvent(
@@ -479,7 +498,7 @@ server <- function(input, output, session) {
       )
     }
   )
-  
+
   ## Set the response variable ----
   responseVar <- eventReactive(
     eventExpr = input$selectedData,
@@ -494,7 +513,7 @@ server <- function(input, output, session) {
     ignoreNULL = TRUE,
     ignoreInit = FALSE
   )
-  
+
   ## Fit the Model ----
   #y not informative "ifelse
   model <- eventReactive(
@@ -545,7 +564,8 @@ server <- function(input, output, session) {
           lower = list(continuous = "blank"),
           diag = list(continuous = "blankDiag"),
           axisLabels = "show",
-          progress = FALSE
+          progress = FALSE,
+          columnLabels = prettyVarNames(vars = input$selectedVars)
         ) +
           theme_bw() +
           theme(
@@ -554,7 +574,7 @@ server <- function(input, output, session) {
       },
       cacheKeyExpr = {list(input$selectedData, input$selectedVars)}
       )
-      
+
       ### VIF table ----
       output$vifTable <- DT::renderDataTable(
         expr = {
@@ -564,7 +584,10 @@ server <- function(input, output, session) {
               message = "Please select at least two predictors."
             )
           )
-          data.frame(VIF = round(vif(model()), digits = 4))
+          data.frame(
+            VIF = round(vif(model()), digits = 4),
+            row.names = prettyVarNames(input$selectedVars)
+          )
         },
         options = list(
           responsive = TRUE,
@@ -579,7 +602,7 @@ server <- function(input, output, session) {
       )
       ### Anova table ----
       anovaOut <- anova(model())
-      rowNames <- row.names(anovaOut)
+      rowNames <- prettyVarNames(row.names(anovaOut))
       anovaOut <- apply(
         X = anovaOut,
         MARGIN = 2,
@@ -591,9 +614,9 @@ server <- function(input, output, session) {
         dplyr::mutate(
           `Pr(>F)` = ifelse(`Pr(>F)` < 0.0001, "< 0.0001", `Pr(>F)`)
         ) %>%
-        dplyr::na_if("NA")
+        dplyr::na_if(y = "NA")
       row.names(anovaOut) <- rowNames
-      
+
       output$anovaTable <- DT::renderDataTable(
         expr = {
           validate(
@@ -628,11 +651,19 @@ server <- function(input, output, session) {
         dplyr::mutate(
           `Pr(>|t|)` = ifelse(`Pr(>|t|)` < 0.0001, "< 0.0001", `Pr(>|t|)`)
         ) %>%
-        dplyr::na_if("NA")
-      row.names(coefOut) <- tableLabels[[1]]
-      
+        dplyr::na_if(y = "NA")
+      row.names(coefOut) <- prettyVarNames(tableLabels[[1]])
+
       output$coefficients <- DT::renderDataTable(
-        expr = coefOut,
+        expr = {
+          validate(
+            need(
+              expr = length(input$selectedVars) >= 2,
+              message = "Please select at least two predictors."
+            )
+          )
+          coefOut
+          },
         options = list(
           responsive = TRUE,
           scrollx = FALSE,
@@ -647,7 +678,7 @@ server <- function(input, output, session) {
     ignoreNULL = FALSE,
     ignoreInit = FALSE
   )
-  
+
   ## Tic-Tac-Toe Section ----
   ## Disabled for now
   #   # Helper Functions
