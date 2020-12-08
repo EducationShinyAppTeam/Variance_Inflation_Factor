@@ -85,8 +85,6 @@ ui <- list(
             serious problem students may faced. So how to decete collinearity
             problem? Try using Varaiance Inflation Factor."),
           h2("Instructions"),
-          p("You will directly learn what's Variance Infaltion Factor and what's
-          causing Collinearity Problem."),
           tags$ol(
             tags$li("Review any prerequiste ideas using the Prerequistes tab."),
             tags$li("Explore the Exploration Tab."),
@@ -124,7 +122,7 @@ ui <- list(
           p("In order to get the most out of this app, please review the
             following."),
           box(
-            title = "What's Collenarity Problem?",
+            title = "What is the Collenarity Problem?",
             collapsible = TRUE,
             collapsed = FALSE,
             width = '100%',
