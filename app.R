@@ -210,7 +210,7 @@ ui <- list(
           h2("Explore the VIFs & Collinearity"),
           p("You can choose different datasets, select various predictors, and
             then explore several tools for looking at collinearity including a
-            scatter plot matrix of predictors, the VIF table, and model summeries."
+            scatter plot matrix of predictors, the VIF table, and model summaries."
           ),
           ## Removing this line for now.
           # p("It will also be part of Game question."),
@@ -246,7 +246,7 @@ ui <- list(
                   title = "Scatter Plot Martix",
                   br(),
                   p(
-                    "Try using scatter plot Martix to figure out which predictors
+                    "Try using scatter plot martix to figure out which predictors
                     have strong correlations."
                   ),
                   plotOutput("scatterplots"),
@@ -256,7 +256,7 @@ ui <- list(
                   br(),
                   p(
                     "Becareful to those VIF scores larger than 5. Select at least
-                    two variables."
+                    two variables. Which models show a strong collinearity problem?"
                   ),
                   DT::dataTableOutput("vifTable"),
                 ),
@@ -430,10 +430,10 @@ server <- function(input, output, session) {
       output$dataContext <- renderUI({
         switch(
           EXPR = input$selectedData,
-          "bikeSharing" = p("This dataset comes from bike rental demand in the
-                            Capital Bikeshare program in Washington, D.C. And you
-                            will explore whether or not variables would have
-                            collineartiy problem."),
+          "bikeSharing" = p("This dataset is used to predict bike rental demand
+                            in the Capital Bikeshare program in Washington, D.C.
+                            You will explore whether or not possible predictor
+                            variables have a collinearity problem."),
           "sesameSt" = p("This dataset evaluated the impact of the first year of
                          the Sesame Street television series. Sesame Street was
                          concerned mainly with teaching preschool related skills
